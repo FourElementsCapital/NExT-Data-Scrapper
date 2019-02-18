@@ -40,8 +40,8 @@ let CONF = {
 }
 
 async function save_article(tab, url, conf) {
-  await tab.goto(url, {waitUntil: 'domcontentloaded'});
 
+  await tab.goto(url, {waitUntil: 'domcontentloaded'});
   let full_html = await tab.evaluate(() => {
     return document.documentElement.innerHTML;
   });
@@ -71,7 +71,7 @@ async function checkPage(tab, conf) {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
   });
   try {
-    await tab.goto(conf.url, {waitUntil: 'domcontentloaded'});
+    await tab.goto(conf.url, {waitUntil: 'networkidle2'});
 
     let latest_article = await tab.evaluate(function(sel) {
       let node =  document.querySelector(sel);
@@ -81,16 +81,16 @@ async function checkPage(tab, conf) {
       let html = await tab.evaluate(function(sel){
         return document.documentElement.innerHTML
       })
-      console.log('full html', html);
+      console.error('ERROR1', conf.name, html);
     }
     else if (conf.last_article !== latest_article) {
-      console.log('ARTICLE CHANGED!!!!!!', latest_article, conf.name);
-      await save_article(tab, latest_article, conf);
+      console.log('ARTICLE CHANGED', latest_article, conf.name);
+      await save_article(tab, latest_article, moment.utc().format(), conf);
       conf.last_article = latest_article;
     }
     return latest_article;
   } catch (E) {
-    console.log('ERORRRRRRRRR', E, conf.name);
+    console.error('ERROR2', E, conf.name);
   } finally {
     setTimeout(checkPage.bind(this, tab, conf), POLL_INTERVAL);
   }
@@ -102,20 +102,20 @@ async function run() {
     headless: false
   });
 
-  //for (site in CONF) {
-  //  let tab = await browser.newPage();
-  //  checkPage(tab, CONF[site]);
-  //}
+  for (site in CONF) {
+    let tab = await browser.newPage();
+    checkPage(tab, CONF[site]);
+  }
 
   //const reutersTab = await browser.newPage();
-  const fastMarketsTab = await browser.newPage();
+  //const fastMarketsTab = await browser.newPage();
   //const mining_copper = await browser.newPage();
   //const mining_iron = await browser.newPage();
   //const mining_nickel = await browser.newPage();
   //
   //
   //checkPage(reutersTab, CONF.reuters);
-  checkPage(fastMarketsTab, CONF.fastmarkets);
+  //checkPage(fastMarketsTab, CONF.fastmarkets);
   //checkPage(mining_copper, CONF.mining_copper);
   //checkPage(mining_iron, CONF.mining_iron);
   //checkPage(mining_nickel, CONF.mining_nickel);

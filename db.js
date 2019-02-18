@@ -27,7 +27,7 @@ client.connect();
 
 module.exports = {
   client: client
-}
+};
 
 
 //query_str = squel.insert().into('news').setFields( articles[0] ).toString();
