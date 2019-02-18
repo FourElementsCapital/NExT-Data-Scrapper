@@ -96,9 +96,9 @@ async function checkPage(tab, conf) {
 }
 
 async function run() {
-
+  let headless = process.env.NODE_ENV == 'production';
   const browser = await puppeteer.launch({
-    headless: false
+    headless: headless
   });
 
   for (site in CONF) {
