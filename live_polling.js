@@ -13,12 +13,12 @@ let CONF = {
     selector: ".featured-article a",
     last_article: null
   },
-  fastmarkets: {
-    name: 'fastmarkets',
-    url:"https://www.fastmarkets.com/commodities/base-metals/news/1",
-    selector: '.mediaItem-body a',
-    last_article: null
-  },
+  //fastmarkets: {
+  //  name: 'fastmarkets',
+  //  url:"https://www.fastmarkets.com/commodities/base-metals/news/1",
+  //  selector: '.mediaItem-body a',
+  //  last_article: null
+  //},
   mining_copper: {
     name: 'mining_copper',
     url: 'http://www.mining.com/tag/copper/',
@@ -107,18 +107,6 @@ async function run() {
     checkPage(tab, CONF[site]);
   }
 
-  //const reutersTab = await browser.newPage();
-  //const fastMarketsTab = await browser.newPage();
-  //const mining_copper = await browser.newPage();
-  //const mining_iron = await browser.newPage();
-  //const mining_nickel = await browser.newPage();
-  //
-  //
-  //checkPage(reutersTab, CONF.reuters);
-  //checkPage(fastMarketsTab, CONF.fastmarkets);
-  //checkPage(mining_copper, CONF.mining_copper);
-  //checkPage(mining_iron, CONF.mining_iron);
-  //checkPage(mining_nickel, CONF.mining_nickel);
 }
 
 run();
