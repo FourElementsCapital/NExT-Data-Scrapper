@@ -4,7 +4,7 @@ const squel = require("squel");
 const moment = require('moment');
 const sdk = require('matrix-js-sdk');
 
-const roomId = '!jwIDoZlOKhvRJjBcee:chat.alphien.com';
+const roomId = '!vsjFNPcXOSUNCOOLgQ:chat.alphien.com';
 let chatClient = null;
 
 async function setUpClient() {
@@ -73,7 +73,7 @@ let CONF = {
 
 async function save_article(tab, url, title, conf) {
   const response = await tab.goto(url, {waitUntil: 'networkidle2'});
-  let final_page_url = response.url()
+  let final_page_url = response.url();
   let full_html = await tab.content();
 
   await sendMessage(`${new Date().toString()}: ${conf.name}: ${title}
