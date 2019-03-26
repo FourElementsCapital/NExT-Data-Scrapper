@@ -150,6 +150,11 @@ async function checkPage(tab, conf) {
 async function run() {
   await setUpClient();
   let headless = process.env.NODE_ENV == 'production';
+  if (headless) {
+    console.log('Starting in Production'); 
+  } else {
+    console.log('Starting in Development');
+  }
   const browser = await puppeteer.launch({
     headless: headless
   });
