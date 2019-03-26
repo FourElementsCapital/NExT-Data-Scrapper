@@ -62,9 +62,16 @@ let CONF = {
     title: '.kesselPost .post-headline',
     last_article: null
   },
-  google_news: {
+  google_news_commodities: {
     name: "Google News - Commodities",
     url: 'https://news.google.com/search?for=commodities&hl=en-SG&gl=SG&ceid=SG:en',
+    selector: "article a",
+    title: "article h4",
+    last_article: null
+  },
+  google_news_copper: {
+    name: "Google News - Copper",
+    url: 'https://news.google.com/search?for=copper&hl=en-SG&gl=SG&ceid=SG:en',
     selector: "article a",
     title: "article h4",
     last_article: null
@@ -76,8 +83,10 @@ async function save_article(tab, url, title, conf) {
   let final_page_url = response.url();
   let full_html = await tab.content();
 
-  await sendMessage(`${new Date().toString()}: ${conf.name}: ${title}
-${final_page_url}`);
+  let production = process.env.NODE_ENV == 'production';
+  if (production) {
+    await sendMessage(`${new Date().toString()}: ${conf.name}: ${title} ${final_page_url}`);
+  }
 
   let query_str = squel.insert({replaceSingleQuotes: true})
       .into('news')
@@ -112,12 +121,19 @@ async function checkPage(tab, conf) {
       let title = titleNode ? titleNode.innerText : "No Title";
       return [link, title]
     }, conf.selector, conf.title);
+
     if (latest_article == 'Empty') {
       let html = await tab.evaluate(function (sel) {
         return document.documentElement.innerHTML
       });
       console.error('ERROR1', conf.name, html);
     }
+
+    else if (conf.last_article  === null) {
+      console.log("First setup");
+      conf.last_article = latest_article
+    }
+
     else if (conf.last_article !== latest_article) {
       console.log('ARTICLE CHANGED', latest_article, conf.name);
       await save_article(tab, latest_article, title, conf);
