@@ -78,12 +78,29 @@ let CONF = {
   }
 };
 
+async function checkAlreadyExists(url) {
+  let query_str = `select exists(select id from news where original_url='${url}');`
+  return new Promise((resolve, reject) => {
+    return client.query(query_str, (err, res) => {
+      return resolve(res.rows[0].exists)
+    })
+  })
+}
+
 async function save_article(tab, url, title, conf) {
   const response = await tab.goto(url, {waitUntil: 'networkidle2'});
   let final_page_url = response.url();
+
+  let already_exists = await checkAlreadyExists(final_page_url)
+  if (already_exists) {
+    console.log('Already exists, return early', final_page_url); 
+    return 
+  }
+  
   let full_html = await tab.content();
 
   let production = process.env.NODE_ENV == 'production';
+  production = true;
   if (production) {
     await sendMessage(`${new Date().toString()}: ${conf.name}: ${title} ${final_page_url}`);
   }
@@ -91,7 +108,7 @@ async function save_article(tab, url, title, conf) {
   let query_str = squel.insert({replaceSingleQuotes: true})
       .into('news')
       .setFields({
-        original_url: url,
+        original_url: final_page_url,
         full_html: full_html,
         source: conf.name,
         article_timestamp: moment.utc().format()
@@ -99,13 +116,15 @@ async function save_article(tab, url, title, conf) {
       .toString();
   query_str += ' ON CONFLICT (original_url) DO NOTHING';
   return new Promise((resolve, reject) => {
-    client.query(query_str, (err, res) => {
+    return client.query(query_str, (err, res) => {
       if (err) reject(err);
       else resolve(res)
     });
   });
 
 }
+
+
 
 async function checkPage(tab, conf) {
   tab.setExtraHTTPHeaders({
@@ -173,4 +192,15 @@ async function run() {
 //test();
 
 run();
+
+//async function test() {
+//  let res = await checkAlreadyExists('http://www.mining.com/web/what-americans-actually-think-about-energy-and-the-climate/');
+//  let res2 = await checkAlreadyExists('asdfa');
+//  console.log(res, typeof res);
+//  console.log(res2, typeof res);
+//}
+//
+//test();
+
+
 
