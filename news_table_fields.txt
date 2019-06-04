@@ -1,0 +1,19 @@
+      Column       |            Type             | Collation | Nullable |                 Default                  | Storage  | Stats target | Description
+-------------------+-----------------------------+-----------+----------+------------------------------------------+----------+--------------+-------------
+ id                | integer                     |           | not null | nextval('scrappy_news_id_seq'::regclass) | plain    |              |
+ created_at        | timestamp without time zone |           |          | now()                                    | plain    |              |
+ title             | text                        |           |          |                                          | extended |              |
+ description       | text                        |           |          |                                          | extended |              |
+ author            | text                        |           |          |                                          | extended |              |
+ full_text         | text                        |           |          |                                          | extended |              |
+ source            | text                        |           |          |                                          | extended |              |
+ original_url      | text                        |           |          | ''::text                                 | extended |              |
+ full_html         | text                        |           |          | ''::text                                 | extended |              |
+ gs_score          | double precision            |           |          |                                          | plain    |              |
+ gs_magnitude      | double precision            |           |          |                                          | plain    |              |
+ article_timestamp | timestamp with time zone    |           |          |                                          | plain    |              |
+Indexes:
+    "news_pkey" PRIMARY KEY, btree (id)
+    "news_original_url_key" UNIQUE CONSTRAINT, btree (original_url)
+Referenced by:
+    TABLE "paras" CONSTRAINT "paras_news_id_fkey" FOREIGN KEY (news_id) REFERENCES news(id)
