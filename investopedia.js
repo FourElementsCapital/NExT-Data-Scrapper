@@ -1,42 +1,67 @@
 const puppeteer = require('puppeteer');
 const createCsvWriter = require('csv-writer').createArrayCsvWriter;
+var _ = require('lodash');
 const csvWriter = createCsvWriter({
   path: 'words.csv',
   append: true
 });
 
 SITE = 'https://www.investopedia.com/terms/';
-LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+  'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+terms = [];
 
 async function checkNext(chrome) {
-  await chrome.evaluate(sel => {
-    var href = document.querySelector(sel).href;
-    return href
-  }, '.next>a' )
+  let href = await chrome.evaluate(sel => {
+    var href = document.querySelector(sel) ? true : false;
+    return href;
+  }, '.next a' );
+  console.log('checknext', href); 
+  return href
 }
 
+
+const fs = require('fs');
+function writeText(text) {
+  fs.writeFile("terms.txt", text, function(err) {
+    if(err) { return console.log(err); }
+  });
+};
+
+
+async function scrapePage(chrome, url) {
+
+}
+
+
 async function run() {
+
   const browser = await puppeteer.launch({
     headless: false
   });
   const chrome = await browser.newPage();
 
-  await chrome.goto(`${SITE}/${LETTERS[0]}`, {waitUntil: 'networkidle2'});
+    for (letter of LETTERS) {
+      console.log("Processing", letter);
+      let page = 0;
+      do {
+        await chrome.goto(`${SITE}/${letter}/?page=${page}`, {waitUntil: 'networkidle2'});
+        page += 1;
+        let nodes = await chrome.evaluate((sel) => {
+          let nodes = Array.from(document.querySelectorAll(sel));
+          nodes = nodes.map(n => n.innerHTML.trim());
+          return nodes;
+        },'.item-title a');
+        terms.push(nodes)
+      } while (await checkNext(chrome));
+    }
 
-  //var words = await chrome.evaluate(sel => {
-  //  let nodes = Array.from(document.querySelectorAll('h3.item-title a'));
-  //  return nodes.map(node => [node.innerText])
-  //}, 'h3.item-title a');
-
-  var next = await checkNext(chrome);
-  console.log(next);
-
-
-
-  //await csvWriter.writeRecords(words);
-
+  //console.log('terms', terms);
+  terms = _.flatten(terms);
+  //console.log('terms', terms);
+  writeText(terms);
 }
 
-run()
+run();
 
 

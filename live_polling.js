@@ -7,6 +7,9 @@ const sdk = require('matrix-js-sdk');
 const roomId = '!vsjFNPcXOSUNCOOLgQ:chat.alphien.com';
 let chatClient = null;
 
+let browser;
+
+// Client for alphien chat room
 async function setUpClient() {
   chatClient = sdk.createClient({
     baseUrl: "https://matrix.alphien.com/",
@@ -16,6 +19,7 @@ async function setUpClient() {
   await chatClient.startClient();
 }
 
+// Helper method for sending messages to alphien chat.
 async function sendMessage(message, type='m.text') {
   var content = {
     "body": message,
@@ -100,7 +104,6 @@ async function save_article(tab, url, title, conf) {
   let full_html = await tab.content();
 
   let production = process.env.NODE_ENV == 'production';
-  production = true;
   if (production) {
     await sendMessage(`${new Date().toString()}: ${conf.name}: ${title} ${final_page_url}`);
   }
@@ -174,7 +177,7 @@ async function run() {
   } else {
     console.log('Starting in Development');
   }
-  const browser = await puppeteer.launch({
+  browser = await puppeteer.launch({
     headless: headless
   });
 
@@ -183,13 +186,9 @@ async function run() {
     checkPage(tab, CONF[site]);
   }
 
+
 }
 
-//async function test () {
-//  await  setUpClient();
-//  await sendMessage('<a href="https://google.com">Waht waht </a>', 'm.html');
-//}
-//test();
 
 run();
 

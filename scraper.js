@@ -54,6 +54,25 @@ async function get_article_data(link, chrome) {
 }
 
 
+async function save_to_db(source, html, url) {
+  let query_str = squel.insert({replaceSingleQuotes: true})
+      .into('news')
+      .setFields({
+        source: source,
+        full_html: html,
+        original_url: url
+      }).toString();
+  query_str += ' ON CONFLICT (original_url) DO NOTHING';
+  return new Promise((resolve, reject) => {
+    global.client.query(query_str, (err, res) => {
+      if (err) reject(err);
+      else resolve(res)
+    });
+  });
+
+}
+
+
 async function run() {
   global.site = site_configs[process.argv[2]];
   console.log('site', site);
@@ -64,45 +83,37 @@ async function run() {
   });
   const chrome = await browser.newPage();
 
-  let link = 'https://www.fastmarkets.com/article/3858263/canada-232-retaliation-hits-us-steel-exports';
-  await chrome.goto(link, {waituntil: 'networkidle2'});
+  //let link = 'https://www.fastmarkets.com/article/3858263/canada-232-retaliation-hits-us-steel-exports';
+  //await chrome.goto(link, {waituntil: 'networkidle2'});
+  //
+  //let html_str = await chrome.evaluate(() => {
+  //  return document.documentElement.innerHTML
+  //});
 
-  let html_str = await chrome.evaluate(() => {
-    return document.documentElement.innerHTML
-  });
 
-  data = extractor(html_str);
-  console.log(data);
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
+  console.log('Scraping', site.name);
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
+  for (let page_no = 1; page_no <= site.last_page; page_no++) {
 
-  //console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
-  //console.log('Scraping', site.name);
-  //console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
-  //for (let page_no = 1; page_no <= 1; page_no++) {
-  //  let links = await getLinks(site.page_url(page_no), chrome);
-  //
-  //  let link = links[0];
-  //  await chrome.goto(link, {waituntil: 'networkidle2'});
-  //
-  //  let html_str = await chrome.evaluate(() => {
-  //    return document.documentElement.innerHTML
-  //  });
-  //
-  //  console.log(html_str);
-  //  data = extractor(html_str);
-  //  console.log(data);
-  //
-  //  let article = true;
-  //  //
-  //  for (link of links) {
-  //    try {
-  //      article = await get_article_data(link, chrome);
-  //    } catch (error) {
-  //      article = false;
-  //    }
-  //    if (article) await article.save_to_db();
-  //  }
-  //}
-  //await browser.close()
+    console.log('Scraping Page', page_no)
+    let links = await getLinks(site.page_url(page_no), chrome);
+
+
+    for (let link of links) {
+      try {
+        await chrome.goto(link, {waituntil: 'networkidle2'});
+        let html_str = await chrome.evaluate(() => {
+          return document.documentElement.innerHTML
+        });
+        let resp = await save_to_db(site.name, html_str, link);
+      } catch (error) {
+        console.log('error', error)
+      }
+    }
+  }
+  await browser.close()
+  process.exit();
 }
 
 
