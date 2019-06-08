@@ -47,7 +47,7 @@ let mining_general = {
 
 link_selector refers to the the CSS selector that corresponds to each article in the list of articles.
 
-== Live Monitoring of News Sites ==
+### Live Monitoring of News Sites ==
 
 Start monitoring by running 'node live_polling.js'
 
