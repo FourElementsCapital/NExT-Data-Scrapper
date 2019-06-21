@@ -6,18 +6,18 @@ let client;
 if (process.env.NODE_ENV == 'development') {
   console.log('Running in Development'); 
   client = new Client({
-    user: "scrappyuser",
-    database: "scrappy",
-    password: "password",
-    port: 5433
+    user: process.env.DB_USER,
+    database: process.env.DB_HOST,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT
   });
 } else if (process.env.NODE_ENV == 'production') {
   console.log('Running in Production');
   client = new Client({
-    user: "scrappyuser",
-    database: "scrappy",
-    password: "aiapaiap",
-    port: 5432
+    user: process.env.DB_USER,
+    database: process.env.DB_HOST,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT
   });
 } else {
   throw "Node Environment Not Set"
