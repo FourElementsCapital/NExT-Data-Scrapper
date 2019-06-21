@@ -79,7 +79,8 @@ async function run() {
   global.start_page = 1;
   if (!site) { throw "Unrecognized Site" }
   const browser = await puppeteer.launch({
-    headless: false
+    //headless: false
+    headless: process.env.NODE_ENV == 'production'
   });
   const chrome = await browser.newPage();
 
