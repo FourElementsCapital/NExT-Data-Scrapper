@@ -50,7 +50,6 @@ async function get_article_data(link, chrome) {
     console.log('error', error); 
     return false
   }
-
 }
 
 
@@ -64,7 +63,7 @@ async function save_to_db(source, html, url) {
       }).toString();
   query_str += ' ON CONFLICT (original_url) DO NOTHING';
   return new Promise((resolve, reject) => {
-    global.client.query(query_str, (err, res) => {
+    client.query(query_str, (err, res) => {
       if (err) reject(err);
       else resolve(res)
     });
@@ -79,18 +78,9 @@ async function run() {
   global.start_page = 1;
   if (!site) { throw "Unrecognized Site" }
   const browser = await puppeteer.launch({
-    //headless: false
     headless: process.env.NODE_ENV == 'production'
   });
   const chrome = await browser.newPage();
-
-  //let link = 'https://www.fastmarkets.com/article/3858263/canada-232-retaliation-hits-us-steel-exports';
-  //await chrome.goto(link, {waituntil: 'networkidle2'});
-  //
-  //let html_str = await chrome.evaluate(() => {
-  //  return document.documentElement.innerHTML
-  //});
-
 
   console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
   console.log('Scraping', site.name);
@@ -119,5 +109,3 @@ async function run() {
 
 
 run();
-
-
