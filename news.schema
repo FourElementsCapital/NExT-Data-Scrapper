@@ -3,7 +3,7 @@
 --
 
 CREATE TABLE news (
-    id integer NOT NULL,
+    id integer NOT NULL AUTO_INCREMENT,
     created_at timestamp DEFAULT now(),
     title text,
     description text,

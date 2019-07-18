@@ -61,7 +61,7 @@ async function save_to_db(source, html, url) {
         full_html: html,
         original_url: url
       }).toString();
-  query_str += ' ON CONFLICT (original_url) DO NOTHING';
+  //query_str += ' ON CONFLICT (original_url) DO NOTHING';
   return new Promise((resolve, reject) => {
     client.query(query_str, (err, res) => {
       if (err) reject(err);
@@ -90,7 +90,6 @@ async function run() {
     console.log('Scraping Page', page_no)
     let links = await getLinks(site.page_url(page_no), chrome);
 
-
     for (let link of links) {
       try {
         await chrome.goto(link, {waituntil: 'networkidle2'});
@@ -98,6 +97,7 @@ async function run() {
           return document.documentElement.innerHTML
         });
         let resp = await save_to_db(site.name, html_str, link);
+ 	console.log('saved')
       } catch (error) {
         console.log('error', error)
       }
