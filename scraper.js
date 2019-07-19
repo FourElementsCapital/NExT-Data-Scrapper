@@ -101,7 +101,6 @@ async function run() {
           return document.documentElement.innerHTML
         });
         let resp = await save_to_db(site.name, html_str, link);
- 	console.log('saved')
       } catch (error) {
         console.log('error', error)
       }

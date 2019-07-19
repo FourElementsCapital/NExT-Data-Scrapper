@@ -1,4 +1,4 @@
-const squel = require("squel");
+//const squel = require("squel");
 //const { Pool, Client } = require('pg');
 const mariadb = require('mariadb');
 
@@ -16,11 +16,13 @@ if (process.env.NODE_ENV == 'development') {
   });
 } else if (process.env.NODE_ENV == 'production') {
   console.log('Running in Production');
-  client = new Client({
+  pool = mariadb.createPool({
+    host: process.env.DB_HOST,
     user: process.env.DB_USER,
-    database: process.env.DB_HOST,
+    database: process.env_DB_NAME,
     password: process.env.DB_PASS,
-    port: process.env.DB_PORT
+    port: process.env.DB_PORT,
+    connectionLimit: 10
   });
 } else {
   throw "Node Environment Not Set"
