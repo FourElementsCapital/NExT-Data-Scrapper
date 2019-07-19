@@ -1,12 +1,12 @@
 const puppeteer = require('puppeteer');
 const squel = require("squel");
 const moment = require('moment');
-const { Pool, Client } = require('pg');
+//const { Pool, Client } = require('pg');
+const mariadb = require('mariadb');
 const chrono = require('chrono-node');
 const site_configs = require('./site_configs');
-const {client} = require('./db');
+const client = require('./db');
 extractor = require('unfluff');
-
 
 async function getLinks(link, chrome) {
   chrome.setExtraHTTPHeaders({
@@ -55,20 +55,24 @@ async function get_article_data(link, chrome) {
 
 async function save_to_db(source, html, url) {
   let query_str = squel.insert({replaceSingleQuotes: true})
-      .into('news')
+      .into('scraperDb.news')
       .setFields({
         source: source,
         full_html: html,
         original_url: url
       }).toString();
   //query_str += ' ON CONFLICT (original_url) DO NOTHING';
+  //console.log(query_str)
   return new Promise((resolve, reject) => {
-    client.query(query_str, (err, res) => {
-      if (err) reject(err);
-      else resolve(res)
-    });
+    client.query(query_str)
+          .then(res => {
+                console.log(res)
+                resolve(res);
+          })
+          .catch(err => {
+                 reject(err)
+          })
   });
-
 }
 
 

@@ -1,0 +1,825 @@
+Running in Production
+site { name: 'Mining.com - General',
+  page_url: [Function: page_url],
+  link_selector: 'article.row.pb-3 h1 a, article.row.pb-3 h3 a',
+  last_page: 2200 }
+++++++++++++++++++++++++++++++++++++++++++++++++
+Scraping Mining.com - General
+++++++++++++++++++++++++++++++++++++++++++++++++
+Scraping Page 1
+INSERT INTO news (source, full_html, original_url) VALUES ('Mining.com - General', '<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width"><link rel="apple-touch-icon" sizes="57x57" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/favicon-16x16.png">
+<link rel="manifest" href="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://www.mining.com/wp-content/themes/miningdotcom/images/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+<meta property="fb:app_id" content="843861445981796">
+<meta property="og:url" content="https://www.mining.com/web/oil-is-fueling-the-commodities-rally-2019-halftime-report/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oil is fueling the commodities rally: 2019 halftime report">
+<meta property="og:description" content="Palladium still the highest valued precious metal.">
+<meta property="og:image" content="https://www.mining.com/wp-content/uploads/2018/08/oil-platform-and-tanker-in-the-sea-ship-rig-transport-dock-admin-900.jpg">
+<title>Oil is fueling the commodities rally: 2019 halftime report – MINING.COM</title>
+<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="//maxcdn.bootstrapcdn.com">
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+<link rel="dns-prefetch" href="//s.w.org">
+<link rel="alternate" type="application/rss+xml" title="MINING.COM » Oil is fueling the commodities rally: 2019 halftime report Comments Feed" href="https://www.mining.com/web/oil-is-fueling-the-commodities-rally-2019-halftime-report/feed/">
+<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/svg\/","svgExt":".svg","source":{"wpemoji":"https:\/\/www.mining.com\/wp-includes\/js\/wp-emoji.js?ver=5.2.2","twemoji":"https:\/\/www.mining.com\/wp-includes\/js\/twemoji.js?ver=5.2.2"}};
+			/**
+ * @output wp-includes/js/wp-emoji-loader.js
+ */
+
+( function( window, document, settings ) {
+	var src, ready, ii, tests;
+
+	// Create a canvas element for testing native browser support of emoji.
+	var canvas = document.createElement( ''canvas'' );
+	var context = canvas.getContext && canvas.getContext( ''2d'' );
+
+	/**
+	 * Checks if two sets of Emoji characters render the same visually.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @private
+	 *
+	 * @param {number[]} set1 Set of Emoji character codes.
+	 * @param {number[]} set2 Set of Emoji character codes.
+	 *
+	 * @return {boolean} True if the two sets render the same.
+	 */
+	function emojiSetsRenderIdentically( set1, set2 ) {
+		var stringFromCharCode = String.fromCharCode;
+
+		// Cleanup from previous test.
+		context.clearRect( 0, 0, canvas.width, canvas.height );
+		context.fillText( stringFromCharCode.apply( this, set1 ), 0, 0 );
+		var rendered1 = canvas.toDataURL();
+
+		// Cleanup from previous test.
+		context.clearRect( 0, 0, canvas.width, canvas.height );
+		context.fillText( stringFromCharCode.apply( this, set2 ), 0, 0 );
+		var rendered2 = canvas.toDataURL();
+
+		return rendered1 === rendered2;
+	}
+
+	/**
+	 * Detects if the browser supports rendering emoji or flag emoji.
+	 *
+	 * Flag emoji are a single glyph made of two characters, so some browsers
+	 * (notably, Firefox OS X) don''t support them.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @private
+	 *
+	 * @param {string} type Whether to test for support of "flag" or "emoji".
+	 *
+	 * @return {boolean} True if the browser can render emoji, false if it cannot.
+	 */
+	function browserSupportsEmoji( type ) {
+		var isIdentical;
+
+		if ( ! context || ! context.fillText ) {
+			return false;
+		}
+
+		/*
+		 * Chrome on OS X added native emoji rendering in M41. Unfortunately,
+		 * it doesn''t work when the font is bolder than 500 weight. So, we
+		 * check for bold rendering support to avoid invisible emoji in Chrome.
+		 */
+		context.textBaseline = ''top'';
+		context.font = ''600 32px Arial'';
+
+		switch ( type ) {
+			case ''flag'':
+				/*
+				 * Test for UN flag compatibility. This is the least supported of the letter locale flags,
+				 * so gives us an easy test for full support.
+				 *
+				 * To test for support, we try to render it, and compare the rendering to how it would look if
+				 * the browser doesn''t render it correctly ([U] + [N]).
+				 */
+				isIdentical = emojiSetsRenderIdentically(
+					[ 0xD83C, 0xDDFA, 0xD83C, 0xDDF3 ],
+					[ 0xD83C, 0xDDFA, 0x200B, 0xD83C, 0xDDF3 ]
+				);
+
+				if ( isIdentical ) {
+					return false;
+				}
+
+				/*
+				 * Test for English flag compatibility. England is a country in the United Kingdom, it
+				 * does not have a two letter locale code but rather an five letter sub-division code.
+				 *
+				 * To test for support, we try to render it, and compare the rendering to how it would look if
+				 * the browser doesn''t render it correctly (black flag emoji + [G] + [B] + [E] + [N] + [G]).
+				 */
+				isIdentical = emojiSetsRenderIdentically(
+					[ 0xD83C, 0xDFF4, 0xDB40, 0xDC67, 0xDB40, 0xDC62, 0xDB40, 0xDC65, 0xDB40, 0xDC6E, 0xDB40, 0xDC67, 0xDB40, 0xDC7F ],
+					[ 0xD83C, 0xDFF4, 0x200B, 0xDB40, 0xDC67, 0x200B, 0xDB40, 0xDC62, 0x200B, 0xDB40, 0xDC65, 0x200B, 0xDB40, 0xDC6E, 0x200B, 0xDB40, 0xDC67, 0x200B, 0xDB40, 0xDC7F ]
+				);
+
+				return ! isIdentical;
+			case ''emoji'':
+				/*
+				 * Love is love.
+				 *
+				 * To test for Emoji 12 support, try to render a new emoji: men holding hands, with different skin
+				 * tone modifiers.
+				 *
+				 * When updating this test for future Emoji releases, ensure that individual emoji that make up the
+				 * sequence come from older emoji standards.
+				 */
+				isIdentical = emojiSetsRenderIdentically(
+					[0xD83D, 0xDC68, 0xD83C, 0xDFFE, 0x200D, 0xD83E, 0xDD1D, 0x200D, 0xD83D, 0xDC68, 0xD83C, 0xDFFC],
+					[0xD83D, 0xDC68, 0xD83C, 0xDFFE, 0x200B, 0xD83E, 0xDD1D, 0x200B, 0xD83D, 0xDC68, 0xD83C, 0xDFFC]
+				);
+
+				return ! isIdentical;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Adds a script to the head of the document.
+	 *
+	 * @ignore
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param {Object} src The url where the script is located.
+	 * @return {void}
+	 */
+	function addScript( src ) {
+		var script = document.createElement( ''script'' );
+
+		script.src = src;
+		script.defer = script.type = ''text/javascript'';
+		document.getElementsByTagName( ''head'' )[0].appendChild( script );
+	}
+
+	tests = Array( ''flag'', ''emoji'' );
+
+	settings.supports = {
+		everything: true,
+		everythingExceptFlag: true
+	};
+
+	/*
+	 * Tests the browser support for flag emojis and other emojis, and adjusts the
+	 * support settings accordingly.
+	 */
+	for( ii = 0; ii < tests.length; ii++ ) {
+		settings.supports[ tests[ ii ] ] = browserSupportsEmoji( tests[ ii ] );
+
+		settings.supports.everything = settings.supports.everything && settings.supports[ tests[ ii ] ];
+
+		if ( ''flag'' !== tests[ ii ] ) {
+			settings.supports.everythingExceptFlag = settings.supports.everythingExceptFlag && settings.supports[ tests[ ii ] ];
+		}
+	}
+
+	settings.supports.everythingExceptFlag = settings.supports.everythingExceptFlag && ! settings.supports.flag;
+
+	// Sets DOMReady to false and assigns a ready function to settings.
+	settings.DOMReady = false;
+	settings.readyCallback = function() {
+		settings.DOMReady = true;
+	};
+
+	// When the browser can not render everything we need to load a polyfill.
+	if ( ! settings.supports.everything ) {
+		ready = function() {
+			settings.readyCallback();
+		};
+
+		/*
+		 * Cross-browser version of adding a dom ready event.
+		 */
+		if ( document.addEventListener ) {
+			document.addEventListener( ''DOMContentLoaded'', ready, false );
+			window.addEventListener( ''load'', ready, false );
+		} else {
+			window.attachEvent( ''onload'', ready );
+			document.attachEvent( ''onreadystatechange'', function() {
+				if ( ''complete'' === document.readyState ) {
+					settings.readyCallback();
+				}
+			} );
+		}
+
+		src = settings.source || {};
+
+		if ( src.concatemoji ) {
+			addScript( src.concatemoji );
+		} else if ( src.wpemoji && src.twemoji ) {
+			addScript( src.twemoji );
+			addScript( src.wpemoji );
+		}
+	}
+
+} )( window, document, window._wpemojiSettings );
+		</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="wp-block-library-css" href="https://www.mining.com/wp-includes/css/dist/block-library/style.css?ver=5.2.2" type="text/css" media="all">
+<link rel="stylesheet" id="zilla_slab-css" href="https://fonts.googleapis.com/css?family=Zilla+Slab%3A300%2C300i%2C400%2C400i%2C500%2C500i%2C600%2C600i%2C700%2C700i&amp;ver=5.2.2" type="text/css" media="all">
+<link rel="stylesheet" id="montserrat-css" href="https://fonts.googleapis.com/css?family=Montserrat%3A100%2C100i%2C200%2C200i%2C300%2C300i%2C400%2C400i%2C500%2C500i%2C600%2C600i%2C700%2C700i%2C800%2C800i%2C900%2C900i&amp;ver=5.2.2" type="text/css" media="all">
+<link rel="stylesheet" id="style-css" href="https://www.mining.com/wp-content/themes/miningdotcom/style.css?ver=5.2.2" type="text/css" media="all">
+<link rel="stylesheet" id="bootstrap-toggle-min-css" href="https://www.mining.com/wp-content/themes/miningdotcom/lib/css/bootstrap4-toggle.min.css?ver=5.2.2" type="text/css" media="all">
+<script type="text/javascript" src="https://www.mining.com/wp-content/themes/miningdotcom/js/header-bundle.js?ver=1"></script>
+<script type="text/javascript" src="https://www.mining.com/wp-content/themes/miningdotcom/scripts/single.js?ver=5.2.2"></script><!--<script type="text/javascript" src="https://www.mining.com/wp-content/themes/miningdotcom/scripts/single.js?ver=5.2.2"></script>-->
+<link rel="https://api.w.org/" href="https://www.mining.com/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.mining.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://www.mining.com/wp-includes/wlwmanifest.xml">
+<link rel="prev" title="China June alumina output rises to highest since May 2017 – stats bureau" href="https://www.mining.com/web/china-june-alumina-output-rises-to-highest-since-may-2017-stats-bureau/">
+<link rel="next" title="BHP fourth-quarter iron ore output down 1%" href="https://www.mining.com/web/bhp-fourth-quarter-iron-ore-output-down-1/">
+<meta name="generator" content="WordPress 5.2.2">
+<link rel="canonical" href="https://www.mining.com/web/oil-is-fueling-the-commodities-rally-2019-halftime-report/">
+<link rel="shortlink" href="https://www.mining.com/?p=996833">
+<link rel="alternate" type="application/json+oembed" href="https://www.mining.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.mining.com%2Fweb%2Foil-is-fueling-the-commodities-rally-2019-halftime-report%2F">
+<link rel="alternate" type="text/xml+oembed" href="https://www.mining.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.mining.com%2Fweb%2Foil-is-fueling-the-commodities-rally-2019-halftime-report%2F&amp;format=xml">
+<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<link rel="icon" href="https://www.mining.com/wp-content/uploads/2019/06/ms-icon-310x310-80x80.png" sizes="32x32">
+<link rel="icon" href="https://www.mining.com/wp-content/uploads/2019/06/ms-icon-310x310-300x300.png" sizes="192x192">
+<link rel="apple-touch-icon-precomposed" href="https://www.mining.com/wp-content/uploads/2019/06/ms-icon-310x310-300x300.png">
+<meta name="msapplication-TileImage" content="https://www.mining.com/wp-content/uploads/2019/06/ms-icon-310x310-300x300.png">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-6jHF7Z3XI3fF4XZixAuSu0gGKrXwoX/w3uFPxC56OtjChio7wtTGJWRW53Nhx6Ev" crossorigin="anonymous">
+
+<!--<script async="async" src="https://www.googletagservices.com/tag/js/gpt.js" type="text/javascript"></script>-->
+<!--<script type="text/javascript">
+		var googletag = googletag || {};
+		googletag.cmd = googletag.cmd || [];
+
+	</script>-->
+
+<!--<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-112617663-1" type="text/javascript"></script>-->
+<!--<script type="text/javascript">
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag(''js'', new Date());
+
+		gtag(''config'', ''UA-112617663-1'');
+	</script>-->
+
+
+<!--<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-4266436-1" type="text/javascript"></script>-->
+<!--<script type="text/javascript">
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag(''js'', new Date());
+
+		gtag(''config'', ''UA-4266436-1'');
+	</script>-->
+<!--<script type="text/javascript">
+    googletag.cmd.push(function() {
+
+        // the first parameter for .addSize is [width, height] of the browser
+        // the second parameter for .addSize is [width, height] of the specific ad
+        // [0, 0] is the default for the browser size.
+
+        let sizeMappingBanner = googletag.sizeMapping().
+        addSize([1024, 768], [970, 250]).
+        addSize([980, 690], [728, 90]).
+        addSize([640, 480], [120, 60]).
+        addSize([0, 0], [88, 31]).
+        build();
+
+        let superLeaderboardSize = googletag.sizeMapping()
+            .addSize([1024, 768], [970, 90])
+            .addSize([980, 690], [728, 90])
+            .addSize([0, 0], [1, 1])
+            .build();
+
+        let mobileSize = googletag.sizeMapping()
+            .addSize([640, 480], [350, 60])
+            .build();
+
+        let mobileSidekickSize = googletag.sizeMapping()
+            .addSize([640, 480], [350, 250])
+            .build();
+
+        let premiumBillboardSize = googletag.sizeMapping()
+            .addSize([1024, 768], [
+                [970, 250],
+                [970, 90]
+            ])
+            .addSize([980, 690], [728, 90])
+            .addSize([0, 0], [300, 250])
+            .build();
+
+        let sidekicksPremiumOneTwoSize = googletag.sizeMapping()
+            .addSize([980, 690], [300, 600])
+            .addSize([320, 0], [300, 250])
+            .addSize([0, 0], [1, 1])
+            .build();
+
+        let premiumSidekickSize = googletag.sizeMapping()
+            .addSize([980, 690], [
+                [300, 600],
+                [300, 250]
+            ])
+            .addSize([320, 0], [300, 250])
+            .addSize([0, 0], [1, 1])
+            .build();
+
+        googletag.defineSlot(''/1043744/Mining.com_SuperLeaderboard_Top_970x90'', [[728, 90], [970, 90]], ''div-gpt-ad-1469741646732-0'').defineSizeMapping(superLeaderboardSize).addService(googletag.pubads());googletag.defineSlot(''/1043744/Mining.com_Billboard_Bottom_970x250'', [[1, 1], [728, 90], [970, 250], [970, 90]], ''div-gpt-ad-1557779285634-0'').defineSizeMapping(sizeMappingBanner).addService(googletag.pubads());googletag.defineSlot(''/1043744/Mining.com_MediumRectangle_Side_300x250'', [300, 250], ''div-gpt-ad-1557778459048-0'').defineSizeMapping(premiumSidekickSize).addService(googletag.pubads());googletag.defineSlot(''/1043744/Mining.com_HalfPage_Side_300x600'', [[300, 600], [300, 250]], ''div-gpt-ad-1560807978012-0'').defineSizeMapping(sidekicksPremiumOneTwoSize).addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.COM_Sidekick_Position2'', [[300, 250], [300, 600]], ''div-gpt-ad-1560810207843-0'').defineSizeMapping(sidekicksPremiumOneTwoSize).addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.COM_Premium_Billboard'', [[300, 250], [970, 90], [970, 250]], ''div-gpt-ad-1558120574496-0'').defineSizeMapping(premiumBillboardSize).addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.COM_Billboard_Position2'', [[300, 250], [970, 90], [970, 250]], ''div-gpt-ad-1557960272833-0'').defineSizeMapping(premiumBillboardSize).addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.com_Sponsor-Website-Post_01'', [''fluid''], ''div-gpt-ad-1557357124474-0'').addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.com_Sponsor-Website-Post_02'', [''fluid''], ''div-gpt-ad-1484158465183-0'').addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.com_Sponsor-Website-Post_03'', [''fluid''], ''div-gpt-ad-1557357742685-0'').addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.com_Sponsor_Content_Position_1'', [''fluid''], ''div-gpt-ad-1560788382278-0'').addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.com_Sponsor_Content_Position_2'', [''fluid''], ''div-gpt-ad-1560808774189-0'').addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.com_Sponsor_Content_Position_3'', [''fluid''], ''div-gpt-ad-1560810007550-0'').addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.com_Sponsor-Website-Post_Small_01'', [''fluid''], ''div-gpt-ad-1557873643573-0'').addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.com_Sponsor-Website-Post_Small_02'', [''fluid''], ''div-gpt-ad-1557874602323-0'').addService(googletag.pubads());googletag.defineSlot(''/1043744/MINING.com_Sponsor-Website-Post_Small_03'', [''fluid''], ''div-gpt-ad-1557874255713-0'').addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.pubads().setTargeting(''Dynamic'', [''takeover'']);
+        googletag.pubads().collapseEmptyDivs(true);
+        googletag.enableServices();
+    });
+</script>--> 
+<!--<script type="text/javascript">
+		window.fbAsyncInit = function() {
+			FB.init({
+			appId            : ''843861445981796'',
+			autoLogAppEvents : true,
+			xfbml            : true,
+			version          : ''v3.3''
+			});
+		};
+	</script>-->
+<!--<script async="" defer="" src="https://connect.facebook.net/en_US/sdk.js" type="8532e292d7b75f05c0d02c10-text/javascript"></script>-->
+<link rel="preload" as="script" href="https://cdn.wootric.com/wootric-sdk.js"><link rel="preload" as="script" href="https://www.mining.com/wp-includes/js/wp-embed.js?ver=5.2.2"><link rel="preload" as="script" href="https://www.mining.com/wp-content/themes/miningdotcom/js/footer-bundle.js?ver=1"><link rel="preload" as="script" href="https://www.mining.com/wp-content/themes/miningdotcom/lib/js/bootstrap4-toggle.min.js?ver=1"><link rel="preload" as="script" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js?ver=1"><link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js?ver=1"><link rel="preload" as="script" href="https://www.mining.com/wp-includes/js/comment-reply.js?ver=5.2.2"><link rel="preload" as="script" href="https://connect.facebook.net/en_US/sdk.js"><link rel="preload" as="script" href="https://www.googletagmanager.com/gtag/js?id=UA-4266436-1"><link rel="preload" as="script" href="https://www.googletagmanager.com/gtag/js?id=UA-112617663-1"><link rel="preload" as="script" href="https://www.googletagservices.com/tag/js/gpt.js"><link rel="preload" as="script" href="https://www.mining.com/wp-content/themes/miningdotcom/scripts/single.js?ver=5.2.2"><link rel="preload" as="script" href="https://www.mining.com/wp-content/themes/miningdotcom/js/header-bundle.js?ver=1"><script src="https://www.mining.com/wp-includes/js/twemoji.js?ver=5.2.2" type="text/javascript" defer=""></script><script src="https://www.mining.com/wp-includes/js/wp-emoji.js?ver=5.2.2" type="text/javascript" defer=""></script></head>
+<body class="syndicatedcontent-template-default single single-syndicatedcontent postid-996833">
+<header id="header" class="header container-fluid">
+<nav class="navbar navbar-expand-xl flex-wrap flex-lg-wrap row py-0 px-0 bg-light">
+<div class="col-sm-12 col-xl-1">
+<div class="d-flex justify-content-between">
+<a class="navbar-brand pl-2" href="https://www.mining.com">
+<img class="desktop-logo" src="https://www.mining.com/wp-content/themes/miningdotcom/images/mdc-site-logo.svg">
+<img class="mobile-logo" src="https://www.mining.com/wp-content/themes/miningdotcom/images/mdc-site-logo-mobile.svg">
+</a>
+<div class="d-flex nav-btn-container">
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon"></span>
+</button>
+</div>
+</div>
+</div>
+<div class="col-sm-12 col-xl-11"> 
+<div class="flex-wrap collapse navbar-collapse flex-grow-1" id="navbarSupportedContent">
+<div class="col-lg-12">
+<div class="row">
+<ul id="menu-header-menu" class="navbar-nav mr-auto main-nav"><li class=" menu-item menu-item-type-custom menu-item-object-custom"><a href="https://www.mining.com" class="nav-link">News</a></li>
+<li class=" menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.mining.com/markets/" class="nav-link">Markets</a></li>
+<li class=" menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.mining.com/intelligence/" class="nav-link">Intelligence</a></li>
+<li class=" menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.mining.com/careers/" class="nav-link">Careers</a></li>
+<li class=" menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.mining.com/education/" class="nav-link">Education</a></li>
+</ul>
+<form role="search" method="get" id="searchform" class="form-inline my-2 my-xl-0" action="https://www.mining.com">
+<div class="input-group mr-2">
+<input name="s" class="form-control" type="search" placeholder="Search" aria-label="Search">
+<div class="input-group-append">
+<button class="btn btn-outline" type="submit"><i class="far fa-search"></i></button>
+</div>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+<div class="collapse navbar-collapse logout-sub-menu" id="navBarLogoutDropdown">
+<div class="col-lg-12">
+<ul class="navbar-nav mr-auto">
+<li><a class="nav-link" href="/profile">Profile</a></li>
+<li><a class="nav-link" href="https://www.mining.com/wp-login.php?action=logout&amp;_wpnonce=c31f0bfd1b">Sign out</a></li> </ul>
+</div>
+</div>
+<div class="header-sub-menu collapse navbar-collapse" id="navbarSupportedContent">
+<div class="container-fluid">
+<div class="d-block d-xl-flex justify-content-between">
+<ul id="menu-header-sub-menu" class="navbar-nav navbar-collapse col-12 col-xl-10 offset-lg-0 offset-xl-1"><li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/gold/" class="nav-link">Gold</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/copper/" class="nav-link">Copper</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/iron-ore/" class="nav-link">Iron Ore</a></li>
+<li class=" menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children dropdown"><a href="http://link" class="nav-link dropdown-toggle id=" navbardropdown"="" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+<ul class="dropdown-menu">
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/lithium/" class="nav-link">Lithium</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/rare-earth/" class="nav-link">Rare Earth</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/nickel/" class="nav-link">Nickel</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/coal/" class="nav-link">Coal</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/uranium/" class="nav-link">Uranium</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/cobalt/" class="nav-link">Cobalt</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/diamond/" class="nav-link">Diamond</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/zinc/" class="nav-link">Zinc</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/platinum/" class="nav-link">Platinum</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/palladium/" class="nav-link">Palladium</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-commodity"><a href="https://www.mining.com/commodity/silver/" class="nav-link">Silver</a></li>
+</ul>
+</li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-category"><a href="https://www.mining.com/category/battery-metals/" class="nav-link">Battery Metals</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-category"><a href="https://www.mining.com/category/exploration/" class="nav-link">Exploration</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-region"><a href="https://www.mining.com/region/usa/" class="nav-link">USA</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-region"><a href="https://www.mining.com/region/canada/" class="nav-link">Canada</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-region"><a href="https://www.mining.com/region/australia/" class="nav-link">Australia</a></li>
+<li class=" menu-item menu-item-type-custom menu-item-object-custom current-menu-ancestor current-menu-parent menu-item-has-children dropdown"><a href="http://more" class="nav-link dropdown-toggle id=" navbardropdown"="" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</a>
+<ul class="dropdown-menu">
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-region"><a href="https://www.mining.com/region/latin-america/" class="nav-link">Latin America</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-region"><a href="https://www.mining.com/region/china/" class="nav-link">China</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-region current-menu-item"><a href="https://www.mining.com/region/africa/" class="nav-link">Africa</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-region"><a href="https://www.mining.com/region/europe/" class="nav-link">Europe</a></li>
+<li class=" menu-item menu-item-type-taxonomy menu-item-object-region"><a href="https://www.mining.com/region/asia/" class="nav-link">Asia</a></li>
+</ul>
+</li>
+</ul> <div class="col-12 col-xl-1 px-0 advertise-link-container"> <a class="nav-link" href="/advertise">Advertise</a></div>
+</div>
+</div>
+</div>
+</nav>
+</header>
+
+<div class="container my-4">
+
+<div id="div-gpt-ad-1469741646732-0" style="max-width:970px;">
+<!--<script type="text/javascript">
+        googletag.cmd.push(function() {
+        googletag.display(''div-gpt-ad-1469741646732-0'');
+        });
+    </script>-->
+</div> 
+<div class="site-content single">
+<article class="single">
+<h1 class="single-title mt-4 mb-2">Oil is fueling the commodities rally: 2019 halftime report</h1>
+<div class="post-meta mb-4">
+<a href="/external-author?author=Frank Holmes- US Global Investors" target="new">Frank Holmes- US Global Investors</a> | July 16, 2019 | 2:59 pm <span class="tags">
+<a href="https://www.mining.com/category/energy/">Energy</a>&nbsp;<a href="https://www.mining.com/category/markets/">Markets</a>&nbsp;<a href="https://www.mining.com/region/usa/">USA</a> &nbsp;<a href="https://www.mining.com/commodity/copper/">Copper</a> &nbsp;<a href="https://www.mining.com/commodity/oil-gas/">Oil &amp; Gas</a> &nbsp;<a href="https://www.mining.com/commodity/palladium/">Palladium</a> &nbsp;<a href="https://www.mining.com/commodity/platinum/">Platinum</a> &nbsp;<a href="https://www.mining.com/commodity/silver/">Silver</a> &nbsp; </span>
+</div>
+<div class="post-inner-content row">
+<div class="col-lg-8 order-0">
+<div class="featured-pic-container ratio-16-9 mb-3">
+<div class="img-content">
+<img width="900" height="600" src="https://www.mining.com/wp-content/uploads/2018/08/oil-platform-and-tanker-in-the-sea-ship-rig-transport-dock-admin-900.jpg" class="attachment-large size-large wp-post-image" alt="" srcset="https://www.mining.com/wp-content/uploads/2018/08/oil-platform-and-tanker-in-the-sea-ship-rig-transport-dock-admin-900.jpg 900w, https://www.mining.com/wp-content/uploads/2018/08/oil-platform-and-tanker-in-the-sea-ship-rig-transport-dock-admin-900-300x200.jpg 300w, https://www.mining.com/wp-content/uploads/2018/08/oil-platform-and-tanker-in-the-sea-ship-rig-transport-dock-admin-900-768x512.jpg 768w" sizes="(max-width: 900px) 100vw, 900px"> </div>
+</div>
+<div class="img-caption mb-3">Oil tanker. Image from archives. </div>
+<p>Commodities were on mostly sound footing in the first half of 2019. The S&amp;P GSCI returned more than 13% as of June 30, one of the best first six months in recent memory. It was not without its challenges, though.</p><div class="d-flex justify-content-center"><div id="div-gpt-ad-1561499308230-0"><!--<script type="text/javascript">googletag.cmd.push(function() {googletag.display(''div-gpt-ad-1561499308230-0'');});</script>--></div></div>
+<p>In a repeat of&nbsp;<a href="http://www.usfunds.com/investor-library/frank-talk/oil-takes-center-stage-commodities-halftime-report-2018">last year,</a>&nbsp;crude oil was the top performing commodity, up 28.76 percent as of June 30. Price action was driven mostly by tensions in the Middle East as well as extended supply cuts by the Organization of Petroleum Exporting Countries (OPEC) and its allies. Global growth concerns began to put pressure on oil in April, but prices surged following June’s&nbsp;<a href="http://www.usfunds.com/investor-library/frank-talk/billionaire-investor-gold-has-everything-going-for-it">attack on two tankers</a>&nbsp;near the Strait of Hormuz, for which the U.S. blamed Iran.</p>
+<p>At a meeting in Vienna this month, OPEC settled on maintaining quotas for another nine months. “The rollover of curbs into a fourth year shows oil producers are ever more bogged down in a struggle to wrest control of the market from the booming U.S. shale industry,” according to&nbsp;<a href="https://www.bloomberg.com/news/articles/2019-07-02/oil-ministers-confident-allies-back-cuts-extension-opec-update">Bloomberg.</a>&nbsp;OPEC’s dominant producer, Saudi Arabia, will likely continue to do the heavy lifting.</p>
+<figure class="wp-block-image"><img src="https://www.mining.com/wp-content/uploads/2019/07/COMM-commodity-returns-first-half-07122019.png" alt="" class="wp-image-996834" srcset="https://www.mining.com/wp-content/uploads/2019/07/COMM-commodity-returns-first-half-07122019.png 600w, https://www.mining.com/wp-content/uploads/2019/07/COMM-commodity-returns-first-half-07122019-300x191.png 300w" sizes="(max-width: 600px) 100vw, 600px"></figure>
+<h3>Palladium still the highest valued precious metal</h3>
+<p>In second place was palladium, up 21.86 percent. In January, palladium—a key ingredient in catalytic converters, which reduce pollutants in car fumes—became the most expensive precious metal after it surpassed gold for the first time since 2002. Last month, for the second time this year, the metal broke above $1,600 an ounce.</p>
+<p>As I’ve explained before, the metal is surging because it’s not only in high demand thanks to tougher emissions standards around the world, particularly in&nbsp;<a href="http://www.usfunds.com/investor-library/frank-talk/heres-why-the-price-of-palladium-just-zoomed-past-gold">Europe,</a>&nbsp;but it’s also expected to post another year of supply deficits. 2019 should mark the eighth straight year of deficits, according to Metals Focus. That’s largely because around 80 percent of all palladium (and platinum) production is concentrated in two countries—South Africa and Russia. The geopolitical risks, then, are very high. Just last month, we saw aggressive wage negotiations begin in the South African platinum mining industry. The Association of Mineworkers and Construction Union (AMCU), one of the groups involved in these talks, has called for a whopping 48 percent rise in the minimum wage.</p>
+<figure class="wp-block-image"><img src="https://www.mining.com/wp-content/uploads/2019/07/palladium-supply-deficit-expected-to-extend-07162019.png" alt="" class="wp-image-996835" srcset="https://www.mining.com/wp-content/uploads/2019/07/palladium-supply-deficit-expected-to-extend-07162019.png 600w, https://www.mining.com/wp-content/uploads/2019/07/palladium-supply-deficit-expected-to-extend-07162019-300x95.png 300w" sizes="(max-width: 600px) 100vw, 600px"></figure>
+<h3>A disappointing showing for copper</h3>
+<p>Besides silver, down 1.17 percent, one of the biggest disappointments so far this year has been copper, despite being up (slightly) in 2019. Back in February, I predicted that this would be&nbsp;<a href="http://www.usfunds.com/investor-library/frank-talk/will-2019-be-the-year-of-king-copper">copper’s year</a>&nbsp;on higher demand related to renewable energy. The trade war between the U.S. and China, however, had different ideas.</p>
+<p>I wasn’t the only one who saw big things for the red metal. Morgan Stanley, Citi and Goldman Sachs all made bullish calls on copper, with Morgan Stanley projecting a 14 percent upside this year on a widening supply deficit.</p>
+<p>I’m still optimistic. According to Bloomberg, copper use should top world production this year by some 189,000 metric tons. Codelco, the world’s largest miner of the metal, said that demand in China remains robust despite trade tensions and that the recent selloff was not justified.</p>
+<h3>Silver slips</h3>
+<p>Speaking of silver, in June it took as many as 90 ounces of the white metal to buy just one ounce of gold. This is way above the average of around 65 over the past 20 years. Whereas appetite for gold has soared in response to&nbsp;<a href="http://www.usfunds.com/investor-library/frank-talk/gold-gets-a-boost-of-rocket-fuel-from-negative-bond-yields-whats-next-for-the-yellow-metal">negative yields</a>&nbsp;around the world and fears of slowing economic growth—the yellow metal cleared $1,400 an ounce last month for the first time since 2013—silver has continued to trade sideways. Many investors might be baffled by this, but keep in mind that half of all silver demand comes from industrial applications. And when this demand cools, the price of silver falls.&nbsp;</p>
+<figure class="wp-block-image"><img src="https://www.mining.com/wp-content/uploads/2019/07/90-ounces-of-silver-to-buy-one-ounce-gold-07162019-LG.png" alt="" class="wp-image-996836" srcset="https://www.mining.com/wp-content/uploads/2019/07/90-ounces-of-silver-to-buy-one-ounce-gold-07162019-LG.png 900w, https://www.mining.com/wp-content/uploads/2019/07/90-ounces-of-silver-to-buy-one-ounce-gold-07162019-LG-300x129.png 300w, https://www.mining.com/wp-content/uploads/2019/07/90-ounces-of-silver-to-buy-one-ounce-gold-07162019-LG-768x330.png 768w" sizes="(max-width: 900px) 100vw, 900px"></figure>
+<h3>U.S. awash in natural gas</h3>
+<p>The worst performing raw material in the first half of the year was natural gas, down 21.5 percent. This should come as no surprise, as the U.S. has an incredible surplus of the stuff right now thanks to the ingenuity of the fracking industry. Last year, U.S. gas production rose to a record of 37 trillion cubic feet, a remarkable 44 percent increase from a decade earlier. The country is now the world’s gas production leader, providing around 21.5 percent of supply in 2018.</p>
+<p>Think of low energy prices as a huge tax cut. This past spring, natural gas in West Texas fell to as low as&nbsp;<em>negative</em>&nbsp;$9 per million British thermal units. Producers were literally paying consumers to take the stuff off their hands. Facing overproduction, Texas drillers are even shooting excess gas back into older wells.</p>
+<p>In its Gas 2019 report, the International Energy Agency (IEA) estimates that natural gas demand will rise 1.6 percent annually until 2024, as a cleaner alternative to coal.</p>
+<p>And while I’m on the topic, for the first time in U.S. history, the amount of electricity generated by coal in April fell below that of renewables such as wind and solar.</p>
+<figure class="wp-block-image"><img src="https://www.mining.com/wp-content/uploads/2019/07/COMM-US-electricity-passed-passed-coal-07122019.png" alt="" class="wp-image-996837" srcset="https://www.mining.com/wp-content/uploads/2019/07/COMM-US-electricity-passed-passed-coal-07122019.png 600w, https://www.mining.com/wp-content/uploads/2019/07/COMM-US-electricity-passed-passed-coal-07122019-300x143.png 300w" sizes="(max-width: 600px) 100vw, 600px"></figure>
+<p>In fact, Bloomberg New Energy Finance (BNEF) now predicts that nearly half of the world’s electricity will come from wind and solar by 2050. New York State, for instance, passed the most aggressive clean energy target in the nation that seeks to significantly boost solar and wind capacity. At the beginning of the year, Germany announced it would close all 84 of its coal-fired power plants over the next 19 years in order to combat the effects of climate change.</p>
+<p>All in all, commodities look very favorable right now, as they’re highly discounted relative to stocks. Should inflation really begin to pick up, I think we ought to see the price of materials soar.</p>
+</div>
+<div class="col-lg-4 order-2 order-lg-1 order-xl-1">
+<form class="p-4 sign-up-newsletter" action="https://go.pardot.com/l/398282/2019-05-21/kpwn6q">
+<h3 class="mb-3">Sign Up for the Energy Digest</h3>
+<div class="form-group">
+<input name="email" type="email" class="form-control">
+</div>
+<div class="form-group">
+<button class="btn btn-primary btn-block">Sign Up</button>
+</div>
+</form> <div class="ad-block-side my-3">
+
+<div id="div-gpt-ad-1557778459048-0">
+<!--<script type="text/javascript">
+        googletag.cmd.push(function() {
+            googletag.display(''div-gpt-ad-1557778459048-0'');
+        });
+    </script>-->
+</div> </div>
+<div class="ad-block-side my-3">
+
+<div id="div-gpt-ad-1560807978012-0">
+<!--<script type="text/javascript">
+        googletag.cmd.push(function() {
+            googletag.display(''div-gpt-ad-1560807978012-0'');
+        });
+    </script>-->
+</div> </div>
+</div>
+<div class="container-fluid order-1 order-lg-2 order-xl-2">
+<div class="d-block d-sm-flex justify-content-between my-3 w-100">
+<div class="post-count-meta">
+<span class="mr-3">
+<i class="fas fa-glasses mr-2"></i>
+593 </span>
+<span>
+<i class="fas fa-comments mr-2"></i>
+0 </span>
+</div>
+<ul class="social-icon-block">
+<li>
+Share
+</li>
+<li>
+<a class="envelope" href="mailto:?subject=Oil is fueling the commodities rally: 2019 halftime report&amp;body=https://www.mining.com/web/oil-is-fueling-the-commodities-rally-2019-halftime-report/">
+<i class="fas fa-envelope"></i>
+</a>
+</li>
+<li>
+<a class="facebook fb-share" href="https://www.mining.com/web/oil-is-fueling-the-commodities-rally-2019-halftime-report/" data-image="https://www.mining.com/wp-content/uploads/2018/08/oil-platform-and-tanker-in-the-sea-ship-rig-transport-dock-admin-900-400x333.jpg" data-title="Oil is fueling the commodities rally: 2019 halftime report" data-desc="Palladium still the highest valued precious metal."><i class="fab fa-facebook-f"></i></a>
+</li>
+<li>
+<a class="twitter" permalink="https://www.mining.com/web/oil-is-fueling-the-commodities-rally-2019-halftime-report/" target="new" href="#"> <i class="fab fa-twitter"></i></a>
+</li>
+<li>
+<a class="linkedin" target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://www.mining.com/web/oil-is-fueling-the-commodities-rally-2019-halftime-report/&amp;title=Oil+is+fueling+the+commodities+rally%3A+2019+halftime+report&amp;summary=&amp;source=MINING.com">
+<i class="fab fa-linkedin-in"></i>
+</a>
+</li>
+</ul>
+<!--<script type="text/javascript">
+$(''.fb-share'').click(function(){
+    elem = $(this);
+    FB.ui({
+        method: ''share'',
+        href: elem.prop(''href'')
+    }, function(response){});
+    return false;
+});
+
+$("a.twitter").on("click", function(e){
+    e.preventDefault();
+    $.ajax({
+        type: ''POST'',
+        url: "https://www.mining.com/wp-admin/admin-ajax.php",
+        data: {
+            action: ''bitly_shorten_url'',
+            url : $(this).attr("permalink")
+        },
+        success: function( data ) {
+            data = JSON.parse(data);
+            console.log("message", data.message);
+            window.open("https://twitter.com/intent/tweet?text=Oil+is+fueling+the+commodities+rally%3A+2019+halftime+report&original_referer=https://www.mining.com/web/oil-is-fueling-the-commodities-rally-2019-halftime-report/&url="+ data.link +"&hashtags=MINING.COM", "_blank");
+            
+        }
+    });
+    
+});
+</script>--> </div>
+</div>
+</div>
+</article></div>
+<section class="related-posts-section mb-4">
+<header class="row my-3">
+<h3 class="secondary-heading col-8 col-sm-5">Mining.com Recommends</h3>
+<div class="col-4 col-sm-7"><div class="divider"></div></div>
+</header>
+<div class="row">
+<article class="col-sm-12 col-lg-3">
+<div class="featured-pic-container ratio-16-9 mb-2">
+<div class="img-content">
+<a href="https://www.mining.com/honey-badgers-trading-volume-up-over-100-after-drilling-high-grades-at-beaver/">
+<img src="https://www.mining.com/wp-content/uploads/2019/07/Honey-badger-adobe-stock.jpg"> </a>
+</div>
+</div>
+<h4><a href="https://www.mining.com/honey-badgers-trading-volume-up-over-100-after-drilling-high-grades-at-beaver/">Investors pile into Honey Badger on Beaver intersects</a></h4>
+<div class="post-excerpt">
+Canadian junior hits high grades at its Thunder Bay, Ontario silver-cobalt project. </div>
+<div class="post-meta">
+<a href="https://www.mining.com/author/staffwriter/">MINING.COM Staff Writer</a>
+| July 18, 2019 | 3:28 pm </div>
+</article>
+<article class="col-sm-12 col-lg-3">
+<div class="featured-pic-container ratio-16-9 mb-2">
+<div class="img-content">
+<a href="https://www.mining.com/fortune-makes-new-copper-discovery-at-nico/">
+<img src="https://www.mining.com/wp-content/uploads/2019/01/fortune-minerals-commits-to-hire-locally-at-canadas-first-primary-cobalt-mine-400x333.jpg"> </a>
+</div>
+</div>
+<h4><a href="https://www.mining.com/fortune-makes-new-copper-discovery-at-nico/">Fortune makes new copper discovery at NICO</a></h4>
+<div class="post-excerpt">
+Three of four representative grab samples collected from the pit returned grades of 1.66%, 1.55% and 0.78% copper. </div>
+<div class="post-meta">
+<a href="https://www.mining.com/author/canadian-miner-staff/">Canadian Mining Journal Staff</a>
+| July 18, 2019 | 1:57 pm </div>
+</article>
+<article class="col-sm-12 col-lg-3">
+<div class="featured-pic-container ratio-16-9 mb-2">
+<div class="img-content">
+<a href="https://www.mining.com/chile-a-step-closer-to-scrapping-copper-funding-for-military/">
+<img src="https://www.mining.com/wp-content/uploads/2019/07/codelco-el-teniente.jpg"> </a>
+</div>
+</div>
+<h4><a href="https://www.mining.com/chile-a-step-closer-to-scrapping-copper-funding-for-military/">Chile a step closer to scrapping copper sales funding for military</a></h4>
+<div class="post-excerpt">
+The government is seeking to free mining giant Codelco from a decades-old mandate to fund the country’s armed forces. </div>
+<div class="post-meta">
+<a href="https://www.mining.com/author/cecilia/">Cecilia Jamasmie</a>
+| July 18, 2019 | 11:54 am </div>
+</article>
+<article class="col-sm-12 col-lg-3">
+<div class="featured-pic-container ratio-16-9 mb-2">
+<div class="img-content">
+<a href="https://www.mining.com/david-harquail-on-franco-nevadas-new-long-life-assets-succession-plans/">
+<img src="https://www.mining.com/wp-content/uploads/2019/07/190521_02_0876_s-777x437.jpg"> </a>
+</div>
+</div>
+<h4><a href="https://www.mining.com/david-harquail-on-franco-nevadas-new-long-life-assets-succession-plans/">David Harquail on Franco-Nevada’s new long-life assets, succession plans</a></h4>
+<div class="post-excerpt">
+"Our company is essentially the Airbnb of the gold industry. We get a little piece of a lot of different mines." </div>
+<div class="post-meta">
+<a href="https://www.mining.com/author/the-northern-miner-staff/">Northern Miner Staff</a>
+| July 18, 2019 | 11:15 am </div>
+</article>
+</div>
+</section>
+<div class="row highlight py-3 my-3">
+<div class="col-lg-4">
+
+<div id="div-gpt-ad-1557873643573-0">
+<!--<script type="text/javascript">
+						googletag.cmd.push(function() {
+							googletag.display(''div-gpt-ad-1557873643573-0'');
+						});
+					</script>-->
+</div>
+</div>
+<div class="col-lg-4">
+
+<div id="div-gpt-ad-1557874602323-0">
+<!--<script type="text/javascript">
+						googletag.cmd.push(function() {
+							googletag.display(''div-gpt-ad-1557874602323-0'');
+						});
+					</script>-->
+</div>
+</div>
+<div class="col-lg-4">
+
+<div id="div-gpt-ad-1557874255713-0">
+<!--<script type="text/javascript">
+						googletag.cmd.push(function() {
+							googletag.display(''div-gpt-ad-1557874126000-0'');
+						});
+					</script>-->
+</div>
+</div>
+</div>
+<div class="ad-block-big my-4">
+
+<div id="div-gpt-ad-1557779285634-0">
+<!--<script type="text/javascript">
+            googletag.cmd.push(function() {
+                googletag.display(''div-gpt-ad-1557779285634-0'');
+            });
+        </script>-->
+</div>
+</div> <div class="row">
+<div class="comment-section col-lg-8">
+ <h3 class="comment-header mb-3">Comments </h3>
+<div id="respond" class="comment-respond">
+<h3 id="reply-title" class="comment-reply-title"> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/web/oil-is-fueling-the-commodities-rally-2019-halftime-report/#respond" style="display:none;">Cancel reply</a></small></h3> <form action="https://www.mining.com/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+<p class="comment-notes"><span id="email-notes">Your email address will not be published.</span> Required fields are marked <span class="required">*</span></p><p class="comment-form-author"><input class="form-control" id="author" name="author" placeholder="Name*"></p>
+<p class="comment-form-email"><input class="form-control" id="email" name="email" placeholder="Email*"></p>
+<p class="comment-form-url"><input class="form-control" id="url" name="url" placeholder="Website"></p>
+<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes"><label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label></p>
+<p class="comment-form-comment"><textarea id="comment" name="comment" class="form-control" aria-required="true" placeholder="Write your comment here...."></textarea></p><p class="form-submit"><input name="submit" type="submit" id="submit" class="btn btn-primary" value="Post"> <input type="hidden" name="comment_post_ID" value="996833" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+</p> </form>
+</div>
+</div>
+<div class="more-news col-lg-4">
+<section class="more-news-section mb-4">
+<h3 class="secondary-heading">More Copper News </h3>
+<article class="mb-3 pb-3">
+<h4><a href="https://www.mining.com/web/first-large-scale-mine-a-test-for-latin-americas-copper-rookie/">First large-scale mine a test for Latin America’s copper rookie</a></h4>
+<div class="post-meta">
+<a href="https://www.mining.com/author/astutt/">
+Amanda Stutt </a>
+| July 18, 2019 | 11:51 am </div>
+</article>
+<article class="mb-3 pb-3">
+<h4><a href="https://www.mining.com/barrick-gold-output-for-the-year-to-hit-upper-end-of-forecast/">Barrick’s gold output for the year to hit upper end of forecast</a></h4>
+<div class="post-meta">
+<a href="https://www.mining.com/author/cecilia/">
+Cecilia Jamasmie </a>
+| July 18, 2019 | 7:55 am </div>
+</article>
+<article class="mb-3 pb-3">
+<h4><a href="https://www.mining.com/anglo-americans-diamond-unit-takes-sparkle-away-from-results/">Anglo American’s diamond unit takes sparkle away from results</a></h4>
+<div class="post-meta">
+<a href="https://www.mining.com/author/cecilia/">
+Cecilia Jamasmie </a>
+| July 18, 2019 | 4:10 am </div>
+</article>
+<article class="mb-3 pb-3">
+<h4><a href="https://www.mining.com/web/send-in-the-troops-congo-raises-the-stakes-on-illegal-mining/">Send in the troops: Congo raises the stakes on illegal mining</a></h4>
+<div class="post-meta">
+<a href="https://www.mining.com/author/astutt/">
+Amanda Stutt </a>
+| July 17, 2019 | 10:40 am </div>
+</article>
+</section>
+
+<div id="div-gpt-ad-1557960404715-0">
+<!--<script type="text/javascript">
+					googletag.cmd.push(function() {
+						googletag.display(''div-gpt-ad-1557960404715-0'');
+					});
+				</script>-->
+</div>
+</div>
+</div>
+ </div>
+
+
+<div id="latest-news-container">
+<div class="loader-div fa-3x d-flex justify-content-center">
+<i class="fas fa-spinner fa-spin latest-news-spinner" style="display:none"></i>
+</div>
+</div>
+<div class="container">
+<div class="ad-block-big my-4">
+
+<div id="div-gpt-ad-1557779285634-0">
+<!--<script type="text/javascript">
+            googletag.cmd.push(function() {
+                googletag.display(''div-gpt-ad-1557779285634-0'');
+            });
+        </script>-->
+</div>
+</div></div>
+
+<footer class="footer bg-light pt-lg-4 pb-lg-3">
+<div class="container-fluid">
+<section class="row align-items-end">
+<div class="col">
+<ul id="menu-footer-left" class="footer-menu-left"><li class=" menu-item menu-item-type-custom menu-item-object-custom"><a href="http://www.infomine.com/policies" class="nav-link">Terms of Use</a></li>
+<li class=" menu-item menu-item-type-custom menu-item-object-custom"><a href="/about" class="nav-link">About Us</a></li>
+</ul> <div>
+© 2019 Glacier Media Group, All Rights Reserved
+</div>
+</div>
+<div class="col text-right">
+<ul id="menu-footer-right" class="footer-menu-right"><li class=" menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.mining.com/advertise/" class="nav-link">Advertise</a></li>
+<li class=" menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.mining.com/contact-us/" class="nav-link">Contact Us</a></li>
+</ul> </div>
+</section>
+</div>
+</footer>
+<!--<script type="text/javascript" src="https://www.mining.com/wp-includes/js/comment-reply.js?ver=5.2.2"></script>-->
+<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js?ver=1"></script>-->
+<!--<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js?ver=1"></script>-->
+<!--<script type="text/javascript" src="https://www.mining.com/wp-content/themes/miningdotcom/lib/js/bootstrap4-toggle.min.js?ver=1"></script>-->
+<!--<script type="text/javascript" src="https://www.mining.com/wp-content/themes/miningdotcom/js/footer-bundle.js?ver=1"></script>-->
+<!--<script type="text/javascript" src="https://www.mining.com/wp-includes/js/wp-embed.js?ver=5.2.2"></script>-->
+
+<!--<script type="text/javascript">
+	// window.wootric_survey_immediately = true; // Shows survey immediately for testing purposes. TODO: Comment out for production.
+	window.wootricSettings = {
+		// email: ''customer@example.com'', // TODO: Required to uniquely identify a user. Email is recommended but this can be any unique identifier.
+		// external_id: ''abc123'', // TODO: Reference field for external integrations only. Send it along with email. OPTIONAL
+		// created_at: 1234567890, // TODO: The current logged in user''s sign-up date as a 10 digit Unix timestamp in seconds. OPTIONAL
+		account_token: ''NPS-4be41943'' // This is your unique account token.
+	};
+</script>-->
+<!--<script type="text/javascript" src="https://cdn.wootric.com/wootric-sdk.js"></script>-->
+<!--<script type="text/javascript">
+	// This loads the Wootric survey
+	window.wootric(''run'');
+</script>-->
+
+
+
+</body>', 'https://www.mining.com/web/oil-is-fueling-the-commodities-rally-2019-halftime-report/')
