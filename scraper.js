@@ -61,7 +61,7 @@ async function save_to_db(source, html, url) {
         full_html: html,
         original_url: url
       }).toString();
-  //query_str += ' ON CONFLICT (original_url) DO NOTHING';
+  query_str += ' ON DUPLICATE KEY UPDATE `source`=VALUES(`source`),`full_html`=VALUES(`full_html`),`original_url`=VALUES(`original_url`)';
   //console.log(query_str)
   return new Promise((resolve, reject) => {
     client.query(query_str)
