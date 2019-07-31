@@ -46,6 +46,8 @@ class DatabaseHelper():
     def articles_with_position_data(self):
         return select([self.news]).where(and_(self.news.c.article_timestamp >= '2014-07-28', self.news.c.article_timestamp <= '2018-02-23'))
 
+    def articles_without_position_data(self):
+        return select([self.news]).where(self.news.c.article_timestamp > '2018-02-23')
 
     def fastmarkets_articles(self):
         st = select([self.news]).where(self.news.c.source == 'fastmarkets')
@@ -91,58 +93,87 @@ class DatabaseHelper():
         print("Time taken", end - start)
         return words, others
 
+    def get_one_article(self, id):
+        st = select([self.news]).where(self.news.c.id == id)
+        res = self.connection.execute(st)
+        return res.first()
+
     def extract_mining_com(self, html):
         soup = BeautifulSoup(html, 'html.parser')
-        title = soup.find('h2', {'class': 'post-headline'})
-        if title is not None:
-            title = title.text.strip()
-        body = soup.find('div', {'class': 'the-post'})
-        if body is not None:
-            paras = body.find_all('p')
+
+        # Extract Title
+        title = soup.find('h2', {'class': 'post-headline'}) or soup.find('h1', {'class': 'single-title'})
+        title = title.text.strip() if title else ""
+
+        # Extract Body Text
+        old_format_body = soup.find('div', {'class': 'the-post'})
+        try:
+            new_format_body = soup.find('div', {'class': 'post-inner-content'}).find('div', {'class': 'col-lg-8'})
+        except AttributeError as e:
+            new_format_body = None
+        if old_format_body:
+            paras = old_format_body.find_all('p')
             paras_text = [p.text.strip().replace('\xa0', '') for p in paras]
             body = '\n'.join(paras_text)
-        article_el = soup.find('time')
-        article_ts = None
-        if article_el is not None:
+        elif new_format_body:
+            paras = new_format_body.find_all('p')
+            paras_text = [p.text.strip().replace('\xa0', '') for p in paras]
+            body = '\n'.join(paras_text)
+        else:
+            body = ""
+
+        # Extract timestamp
+        old_format_time_el = soup.find('time')
+        try:
+            new_format_time_el = soup.find('article').find('div', {'class': 'post-meta'})
+        except AttributeError as e:
+            new_format_time_el = None
+
+        if old_format_time_el:
             try:
-                v_ts = article_el.get('datetime') or article_el.get('data-unixtime')
+                v_ts = old_format_time_el.get('datetime') or \
+                       old_format_time_el.get('data-unixtime')
                 article_ts = arrow.get(v_ts).datetime
             except Exception as e:
-                print("Count not parse:", article_el, v_ts)
                 article_ts = None
-        return title, body, article_ts
+        elif new_format_time_el:
+            s = list(new_format_time_el.next_elements)[3]
+            bits = s.strip().split('|')
+            bits = [s.strip() for s in bits]
+            ss = (bits[1] + ' ' + bits[2]).strip()
+            article_ts = arrow.get(ss, "MMMM D, YYYY H:mm a").datetime
+        else:
+            article_ts = None
 
-    def set_mining_com_data(self, articles=None):
-        if not articles:
-            articles = self.get_articles('Mining.com - Copper')
-        print("Setting Data for {} articles".format(articles.rowcount))
+        # Extract author
+        old_format_byline = soup.find('div', {'class': 'post-byline'})
+        try:
+            new_format_byline = soup.find('article').find('div', {'class': 'post-meta'}).find('a')
+        except AttributeError as e:
+            new_format_byline = ""
+
+        if old_format_byline:
+            author = old_format_byline.text.split('|')[0] if old_format_byline else ""
+        elif new_format_byline:
+            author = new_format_byline.text
+        else:
+            author = ""
+
+        return title, body, article_ts, author
+
+    def set_mining_com_data(self, articles):
+        print("Extracting Data from HTML for {} articles".format(articles.rowcount))
         for i, a in enumerate(articles):
             if i % 100 == 0:
-                print("Processing:", i)
-            title, body, article_ts = self.extract_mining_com(a.full_html)
+                print("Extracting Data from HTML: {}/{}".format(i, articles.rowcount))
+            title, body, article_ts, author = self.extract_mining_com(a.full_html)
             up = self.news.update().values(
                 title=title,
                 full_text=body,
-                article_timestamp=article_ts).where(self.news.c.id == a.id)
-            self.connection.execute(up)
-
-    def set_mining_com_authors(self, articles=None):
-        for i, a in enumerate(articles):
-            if i % 100 == 0:
-                print("Processing:", i)
-            soup = BeautifulSoup(a.full_html, 'html.parser')
-            byline = soup.find('div', {'class': 'post-byline'})
-            if not byline:
-                print('Skipped', a.id)
-                continue
-            author = byline.text.split('|')[0]
-            up = self.news.update().values(
+                article_timestamp=article_ts,
                 author=author
-            ).where(
-                self.news.c.id == a.id
-            )
+            ).where(self.news.c.id == a.id)
             self.connection.execute(up)
-
 
 
 class SpacyHelper():
@@ -400,5 +431,7 @@ class SpacyHelper():
             if stemmed:
                 res.add(stemmed)
         return res
+
+
 
 
