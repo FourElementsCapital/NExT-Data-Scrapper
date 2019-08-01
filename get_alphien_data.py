@@ -29,7 +29,7 @@ def m2ar(matrix,lag = False):
     time_series.columns = matrix.colnames
     return time_series
 
-def get_alphien_data(start_date, end_date, target_column):
+def get_alphien_data(start_date = None, end_date = None):
     '''
         Get positioning data from alphien
         Input
@@ -39,26 +39,26 @@ def get_alphien_data(start_date, end_date, target_column):
         Output
         time_series(df)		: Pandas DataFrame
         Example
-            start_date = date(2014, 7, 28)
-            end_date = date(2018, 2, 23)
-            target_column = 'avg_net_norm'
-            get_alphien_data(start_date = start_date, end_date = end_date, target_column = target_column)
+        start_date = date(2014, 7, 28)
+        end_date = date(2018, 2, 23)
+        get_alphien_data(start_date = start_date, end_date = end_date)
     '''
     # Creating proper dataframe using R
+    if start_date is None:
+        start_date = 'NULL'
+    else:
+        start_date = '"'+str(start_date)+'"'
+    if end_date is None:
+        end_date = 'NULL'
+    else:
+        end_date = '"'+str(end_date)+'"'
     robjects.r('''tickers = getTickersPositions(exchange = "LME",
                                                 direction = c("Net","Total"),
                                                 account = c("Managed Money","Open Interest"))''')
-#    robjects.r('''name = getReferenceBuildingBlock(fieldName = "name",
-#                                                   key = "researchTicker",selectionKey = tickers$commo)''')
-#    robjects.r('''colnam = tolower(paste0(name[,1],"_",tickers$direction))''')
-    robjects.r('''colnam = tolower(paste0(tickers$commo,"_",tickers$direction))''')
-    robjects.r('''data = getSecurity(tickers$ticker,extension="Index")''')
-    robjects.r('''colnames(data) = colnam''')
+    robjects.r('''data = getSecurity(tickers$ticker,extension="Index",
+                                     start='''+start_date+''',end='''+end_date+''',
+                                     )''')
     data = robjects.r('''data''')
     # Convert R object to pandas df
     data = m2ar(data)
-    date_range = pd.date_range(start_date, end_date)
-    return pd.DataFrame(data = {
-        'article_date': date_range,
-        target_column : np.random.rand(len(date_range))
-    })
+    return data
