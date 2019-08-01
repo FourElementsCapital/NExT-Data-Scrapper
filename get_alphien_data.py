@@ -2,7 +2,7 @@ import rpy2.robjects as robjects
 import numpy as np
 import pandas as pd
 from datetime import date
-robjects.r('.source4Efunction()')
+robjects.r('.sourceQlib()')
 from rpy2.robjects.packages import importr
 rbase = importr('base')
 rzoo = importr('zoo')
@@ -48,9 +48,10 @@ def get_alphien_data(start_date, end_date, target_column):
     robjects.r('''tickers = getTickersPositions(exchange = "LME",
                                                 direction = c("Net","Total"),
                                                 account = c("Managed Money","Open Interest"))''')
-    robjects.r('''name = getReferenceBuildingBlock(fieldName = "name",
-                                                   key = "researchTicker",selectionKey = tickers$commo)''')
-    robjects.r('''colnam = tolower(paste0(name[,1],"_",tickers$direction))''')
+#    robjects.r('''name = getReferenceBuildingBlock(fieldName = "name",
+#                                                   key = "researchTicker",selectionKey = tickers$commo)''')
+#    robjects.r('''colnam = tolower(paste0(name[,1],"_",tickers$direction))''')
+    robjects.r('''colnam = tolower(paste0(tickers$commo,"_",tickers$direction))''')
     robjects.r('''data = getSecurity(tickers$ticker,extension="Index")''')
     robjects.r('''colnames(data) = colnam''')
     data = robjects.r('''data''')
