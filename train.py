@@ -17,14 +17,45 @@ from nltk.stem import SnowballStemmer
 import pandas as pd
 import utils
 import model
-from datetime import date
+from datetime import date, timedelta
 import numpy as np
 
 s = utils.SpacyHelper()
 db = utils.DatabaseHelper()
 
+metals =['zinc', 'lead', 'nickel', 'copper', 'aluminium', 'tin']
+
+mapper = {
+    'COTMBMML': 'aluminium_long',
+    'COTMBMMN': 'aluminium_net',
+    'COTMBMMS': 'aluminium_short',
+    'COTMBOIN': 'aluminium_total',
+    'COTMCMML': 'copper_long',
+    'COTMCMMN': 'copper_net',
+    'COTMCMMS': 'copper_short',
+    'COTMCOIN': 'copper_total',
+    'COTMHMML': 'nickel_long',
+    'COTMHMMN': 'nickel_net',
+    'COTMHMMS': 'nickel_short',
+    'COTMHOIN': 'nickel_total',
+    'COTMPMML': 'lead_long',
+    'COTMPMMN': 'lead_net',
+    'COTMPMMS': 'lead_short',
+    'COTMPOIN': 'lead_total',
+    'COTMQMML': 'tin_long',
+    'COTMQMMN': 'tin_net',
+    'COTMQMMS': 'tin_short',
+    'COTMQOIN': 'tin_total',
+    'COTMRMML': 'zinc_long',
+    'COTMRMMN': 'zinc_net',
+    'COTMRMMS': 'zinc_short',
+    'COTMROIN': 'zinc_total'}
+
 
 def extract_full_text_and_meta():
+    """
+    Extract text, author and other metadata from all recently add articles
+    """
     sql_st = select([db.news]).where(
         and_(
             db.news.c.source.like('Mining%'),
@@ -36,6 +67,9 @@ def extract_full_text_and_meta():
 
 
 def calculate_sentiment_scores():
+    """
+    Calculate sentiment scores for articles that were newly added
+    """
     sql_st = select([db.news]).where(
         and_(
             db.news.c.source.like('Mining%'),
@@ -59,6 +93,12 @@ def calculate_sentiment_scores():
 
 
 def calculate_author_bias(start_date, end_date):
+    """
+    Calculate average sentiment of articles written by authors
+    :param start_date of articles to process
+    :param end_date of articles to process
+    :return: dataframe of authors with average sentiment scores
+    """
     print("Calculating Author Bias")
     sql_st = select([
         db.news.c.author,
@@ -99,15 +139,19 @@ def calculate_author_bias(start_date, end_date):
 
 
 def convert_to_date(row):
+    """
+    Extracts date portion from datetime timestamp for each article
+    :param row: row to extract date from datetime
+    :return: row with date
+    """
     row['article_date'] = row['article_timestamp'].date()
     return row
 
 
 def get_articles(start_date, end_date):
-
     """
-    :param start_date:
-    :param end_date:
+    :param start_date
+    :param end_date
     :return: Dataframe of articles within the relevant range
     """
 
@@ -141,14 +185,25 @@ def get_articles(start_date, end_date):
 
     return articles
 
+
+
 def train_model(authors, articles, positions, target_column, delta_days):
+    """
+    :param authors: dataframe of authors with aggregate sentiment scores
+    :param articles: dataframe of articles with sentiment scores
+    :param positions: dataframe of positions
+    :param target_column: name of column being predicted
+    :param delta_days: days in the future to make prediction for
+    :return:
+    """
     print("Starting Training for {}, Delta {}".format(target_column, delta_days))
-    best_score = 0
+    best_f1_score = 0
     best_result = None
+    best_params = None
     for max_b in range(5, 10):
         for min_b in range(-10, -5):
             for x_cols in [['negative'], ['negative', 'positive'], ['negative', 'uncertain'],
-                      ['negative', 'positive', 'uncertain']]:
+                           ['negative', 'positive', 'uncertain']]:
                 try:
                     s = model.SentimentModel(authors, articles, positions, target_column, delta_days)
                     s.filter_by_authors(
@@ -156,22 +211,38 @@ def train_model(authors, articles, positions, target_column, delta_days):
                         min_positive_bias=min_b
                     ).generate_daily_summaries().process_data()
                     s.lr_cv_split(x_cols)
-                    score = s.result['score']
-                    if score > best_score:
-                        best_score = score
-                        best_result = s.result['score']
+                    f1_score = s.result['f1_score']
+                    if f1_score > best_f1_score:
+                        best_f1_score = f1_score
+                        best_result = s.result
                         best_params = [max_b, min_b, x_cols]
-                    print('values', max_b, min_b, score, x_cols)
                 except Exception as e:
-                    print("Exception", e)
-    return best_result
+                    pass
+    return best_result, best_params
 
-def get_alphien_data(start_date, end_date, target_column):
+
+def get_alphien_data(start_date, end_date):
     date_range = pd.date_range(start_date, end_date)
-    return pd.DataFrame(data = {
-        'article_date': date_range,
-        target_column : np.random.rand(len(date_range))
-    })
+
+    data = {'article_date': date_range}
+
+    for k,v in mapper.items():
+        data[k] = np.random.randint(10000, 200000, len(date_range))
+
+    return pd.DataFrame(data)
+
+
+
+def process_alphien_data(alphien_data):
+    """
+    :param alphien_data: raw data about the net and total positions for the 6 base metals
+    :return: processed dataframe containing 'avg_net_norm', the target column of interest
+    """
+    alphien_data = alphien_data.rename(columns = mapper)
+    for metal in metals:
+        alphien_data['{}_net_norm'.format(metal)] = alphien_data['{}_net'.format(metal)] / alphien_data['{}_total'.format(metal)]
+    alphien_data['avg_net_norm'] = alphien_data.loc[:, 'zinc_net_norm': 'tin_net_norm'].mean(axis=1)
+    return alphien_data
 
 
 def main():
@@ -184,16 +255,34 @@ def main():
 
     authors = calculate_author_bias(start_date, end_date)
     articles = get_articles(start_date, end_date)
-    positions = get_alphien_data(start_date, end_date, target_column)
+    alphien_data = get_alphien_data(start_date, end_date)
+    positions = process_alphien_data(alphien_data)
 
+    results = {}
     # delta 1 model
-    del1_result = train_model(authors, articles, positions, target_column, 1)
+    del1, del1_best_params = train_model(authors, articles, positions, target_column, 1)
+    print("Delta 1 Results - Accuracy: {}, F1 Score: {}".format(del1['accuracy'], del1['f1_score']), )
+    results['del1'] = del1['predictions']
 
     # delta 3 model
-    del3_result = train_model(authors, articles, positions, target_column, 3)
+    del3, del3_best_params = train_model(authors, articles, positions, target_column, 3)
+    print("Delta 3 Results - Accuracy: {}, F1 Score: {}".format(del3['accuracy'], del3['f1_score']), )
+    results['del3'] = del3['predictions']
 
-    # delta 1 model
-    del3_result = train_model(authors, articles, positions, target_column, 5)
+    # delta 5 model
+    del5, del5_best_params = train_model(authors, articles, positions, target_column, 5)
+    print("Delta 5 Results - Accuracy: {}, F1 Score: {}".format(del5['accuracy'], del5['f1_score']), )
+    results['del5'] = del5['predictions']
+
+    date_range = pd.date_range(
+        end_date - timedelta(days=len(del1['predictions']) - 1),
+        end_date
+    )
+    results['date'] = date_range
+
+    predictions = pd.DataFrame(data=results)
+    return predictions
+
 
 
 if __name__ == "__main__":
