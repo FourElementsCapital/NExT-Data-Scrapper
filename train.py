@@ -20,7 +20,7 @@ import model
 from datetime import date, timedelta
 import numpy as np
 import rpy2.robjects as robjects
-robjects.r('.sourceQlib()')
+robjects.r('.source4Efunction()')
 from rpy2.robjects.packages import importr
 rbase = importr('base')
 rzoo = importr('zoo')
@@ -222,6 +222,7 @@ def train_model(authors, articles, positions, target_column, delta_days):
                         best_result = s.result
                         best_params = [max_b, min_b, x_cols]
                 except Exception as e:
+                    print(e)
                     pass
     return best_result, best_params
 
@@ -279,6 +280,8 @@ def get_alphien_data(start_date = None, end_date = None):
     data = robjects.r('''data''')
     # Convert R object to pandas df
     data = m2ar(data)
+    data.index.name = 'article_date'
+    data.reset_index(level=0,inplace=True)
     return data
 
 
