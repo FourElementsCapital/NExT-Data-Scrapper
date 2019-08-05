@@ -12,7 +12,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
+import warnings
 from sklearn.exceptions import UndefinedMetricWarning
+warnings.filterwarnings(action='ignore', category=UndefinedMetricWarning)
 
 class SentimentModel:
     def __init__(self, authors, articles, positions, target_column, delta_days):
@@ -25,6 +27,13 @@ class SentimentModel:
         self.delta_days = delta_days
 
     def process_one_day(self, k, data):
+        """
+        Creates the average positive, negative and
+        uncertain sentiment of all articles for one day
+        :param k: date of articles being processed
+        :param data: dataframe of articles for the particular date
+        :return: dictionary of average sentiment for one day
+        """
         res = {'article_date': k}
         res['positive'] = data.p_count_norm.mean()
         res['negative'] = data.n_count_norm.mean()
@@ -34,6 +43,10 @@ class SentimentModel:
         return res
 
     def generate_daily_summaries(self):
+        """
+        Process all articles to produce average sentiment for each day
+        Sets this processed data to self.data
+        """
         days = []
         grouped_data = self.filtered_articles.groupby('article_date')
         for k, v in grouped_data.groups.items():
@@ -46,8 +59,13 @@ class SentimentModel:
         return self
 
     def filter_by_authors(self, max_positive_bias=None, min_positive_bias=None):
+        """
         # produce a smaller subset of articles based on selected authors
         # authors avg_net is avg_pos - avg_neg
+        :param max_positive_bias: filter out authors who have a bias above this value
+        :param min_positive_bias: filter out authors who have a bias below this value
+        Set the result to self.filtered_articles
+        """
         self.filtered_authors = self.authors.copy(deep=True)
         if max_positive_bias:
             self.filtered_authors = self.filtered_authors[self.filtered_authors['positive_bias'] < max_positive_bias]
@@ -62,6 +80,11 @@ class SentimentModel:
         return self
 
     def process_data(self, classes=2):
+        """
+        Calculates the difference in position for 1,3 and 5 days.
+        Converts this delta to classes: +1 for positive change and -1 for negative change
+        :param classes: number of classes to categorize the delta changes into
+        """
         self.calculate_deltas(self.target_column)
         if classes == 2:
             self.data = self.data.apply(self.delta_direction2, args=(self.target_column,), axis=1)
@@ -71,7 +94,11 @@ class SentimentModel:
             raise NotImplementedError
 
     def calculate_deltas(self, col_name):
-        # calculates changes between today and previous 1,3 and 5 days for target column
+        """
+        Calculates changes between today and previous
+         1,3 and 5 days for target column
+        :param col_name: column to calculate deltas for
+        """
         self.data['{}_del1'.format(col_name)] = self.data[col_name].diff(-1) * -1
         self.data['{}_del3'.format(col_name)] = self.data[col_name].diff(-3) * -1
         self.data['{}_del5'.format(col_name)] = self.data[col_name].diff(-5) * -1
@@ -79,13 +106,23 @@ class SentimentModel:
         return self
 
     def delta_direction2(self, row, col_name):
-        # converts changes into categories, 1 for positive change and -1 for negative change
+        """
+        converts changes into categories, 1 for positive change and -1 for negative change
+        :param row: one row from the dataframe
+        :param col_name: name of column being worked on
+        """
+
         row['{}_del1_dir'.format(col_name)] = 1 if row['{}_del1'.format(col_name)] > 0 else -1
         row['{}_del3_dir'.format(col_name)] = 1 if row['{}_del3'.format(col_name)] > 0 else -1
         row['{}_del5_dir'.format(col_name)] = 1 if row['{}_del5'.format(col_name)] > 0 else -1
         return row
 
     def delta_direction3(self, row, col_name):
+        """
+        converts changes into categories, -1, 0 and 1
+        :param row: one row from the dataframe
+        :param col_name: name of column being worked on
+        """
         col_names = ['{}_del1'.format(col_name), '{}_del3'.format(col_name), '{}_del5'.format(col_name)]
         for c in col_names:
             val = 0
@@ -99,6 +136,11 @@ class SentimentModel:
         return row
 
     def lr_cv_split(self, x_cols):
+        """
+        Trains a model based on self.data
+        :param x_cols: Name of the columns to use as features
+        :return: result containing trained model and predictions
+        """
         y_col = "{}_del{}_dir".format(self.target_column, self.delta_days)
         df = self.data
         df = df.dropna(subset=[y_col])
@@ -135,6 +177,6 @@ class SentimentModel:
             'y_test': y_test
         }
         self.result = result
-        # self.result['score'] = max(self.result['clf'].cv_results_['mean_test_score'])
-        self.result['score'] = f1_score(self.result['y_test'], self.result['clf'].predict(self.result['X_test']))
+        self.result['accuracy'] = max(self.result['clf'].cv_results_['mean_test_score'])
+        self.result['f1_score'] = f1_score(self.result['y_test'], self.result['clf'].predict(self.result['X_test']))
         return self
