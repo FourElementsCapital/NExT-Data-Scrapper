@@ -16,7 +16,7 @@ from spacy.matcher import PhraseMatcher
 from timeit import default_timer as timer
 import arrow
 from nltk.stem import SnowballStemmer
-
+import configparser
 
 class DatabaseHelper():
     def __init__(self):
@@ -30,13 +30,9 @@ class DatabaseHelper():
         on whether in the production or development enviroment
         :return: Database engine
         """
-        try:
-            print('Development Environment')
-            engine = create_engine('postgresql+psycopg2://scrappyuser:password@localhost:5433/scrappy')
-        except Exception as e:
-            engine = create_engine('postgresql+psycopg2://scrappyuser:aiapaiap@localhost:5432/scrappy')
-            print("Production Environment")
-        engine = create_engine('postgresql+psycopg2://scrappyuser:password@localhost:5433/scrappy')
+        config = configparser.ConfigParser()
+        config.read('/mnt/public/Libs/.pyConfig.ini')
+        engine = create_engine('mysql+mysqldb://'+config['mariadbscraper']['user']+':'+config['mariadbscraper']['pass']+'@'+config['mariadbscraper']['host']+':'+config['mariadbscraper']['port']+'/scraperDb')
         return engine
 
     def get_table(self, name):
