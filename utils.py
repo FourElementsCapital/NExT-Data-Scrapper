@@ -25,6 +25,11 @@ class DatabaseHelper():
         self.news = self.get_table('news')
 
     def get_engine(self):
+        """
+        Create appropriate instance of database engine depending
+        on whether in the production or development enviroment
+        :return: Database engine
+        """
         try:
             print('Development Environment')
             engine = create_engine('postgresql+psycopg2://scrappyuser:password@localhost:5433/scrappy')
@@ -35,25 +40,50 @@ class DatabaseHelper():
         return engine
 
     def get_table(self, name):
+        """
+        Return SQLAlchemy representation of a database table
+        :param name: name of table
+        """
         meta = MetaData()
         table = Table(name, meta, autoload=True, autoload_with=self.engine)
         return table
 
     def get_articles(self, source):
+        """
+        Helper method for getting articles from a particular source
+        :param source: name of source
+        :return: SQLAlchemy cursor of articles
+        """
         st = select([self.news]).where(self.news.c.source == source)
         return self.connection.execute(st)
 
     def articles_with_position_data(self):
+        """
+        Helper method for getting subset of articles that position data is availabe for
+        :return: SQLAlchemy cursor of articles
+        """
         return select([self.news]).where(and_(self.news.c.article_timestamp >= '2014-07-28', self.news.c.article_timestamp <= '2018-02-23'))
 
     def articles_without_position_data(self):
+        """
+        Helper method for getting subset of articles without position data
+        :return: SQLAlchemy cursor of articles
+        """
         return select([self.news]).where(self.news.c.article_timestamp > '2018-02-23')
 
     def fastmarkets_articles(self):
+        """
+        Helper method for getting subset of articles from fastmarkets
+        :return: SQLAlchemy cursor of articles
+        """
         st = select([self.news]).where(self.news.c.source == 'fastmarkets')
         return self.connection.execute(st)
 
     def set_fastmarkets_data(self):
+        """
+        Set title, body and other metadata on articles scraped from fastmarkets
+        :return:
+        """
         articles = self.fastmarkets_articles()
         for i, a in enumerate(articles):
             if i % 100 == 0:
@@ -63,6 +93,12 @@ class DatabaseHelper():
             self.connection.execute(up)
 
     def extract_fast_markets(self, html):
+        """
+        Extracts title, body and other metadata from the html
+        scraped from fastmarkets
+        :param html:
+        :return: title and body
+        """
         soup = BeautifulSoup(html, 'html.parser')
         title = soup.find("h1", {'class': 'heading-title'})
         if title is not None:
@@ -72,33 +108,22 @@ class DatabaseHelper():
             body = body.text.strip()
         return title, body
 
-    def extract_keywords(self, articles):
-        nlp = spacy.load('en_core_web_sm')
-        words = defaultdict(lambda: 0)
-        others = defaultdict(lambda: 0)
-        print("Processing Total", articles.rowcount)
-        start = timer()
-        for i, f in enumerate(articles):
-            if not f.full_text:
-                continue
-            doc = nlp(f.full_text)
-            for token in doc:
-                if not token.is_stop and not token.is_punct and token.is_alpha:
-                    words[token.lemma_] += 1
-                else:
-                    others[token.text] += 1
-            if i % 100 == 0:
-                print("Processed", i)
-        end = timer()
-        print("Time taken", end - start)
-        return words, others
-
     def get_one_article(self, id):
+        """
+        Fetch one article by id
+        :param id:
+        :return: article
+        """
         st = select([self.news]).where(self.news.c.id == id)
         res = self.connection.execute(st)
         return res.first()
 
     def extract_mining_com(self, html):
+        """
+        Extract title, body and other metadata from html scraped from mining.com
+        :param html:
+        :return: title, body, article_timestampe and author
+        """
         soup = BeautifulSoup(html, 'html.parser')
 
         # Extract Title
@@ -137,11 +162,14 @@ class DatabaseHelper():
             except Exception as e:
                 article_ts = None
         elif new_format_time_el:
-            s = list(new_format_time_el.next_elements)[3]
-            bits = s.strip().split('|')
-            bits = [s.strip() for s in bits]
-            ss = (bits[1] + ' ' + bits[2]).strip()
-            article_ts = arrow.get(ss, "MMMM D, YYYY H:mm a").datetime
+            try:
+                s = list(new_format_time_el.next_elements)[3]
+                bits = s.strip().split('|')
+                bits = [s.strip() for s in bits]
+                ss = (bits[1] + ' ' + bits[2]).strip()
+                article_ts = arrow.get(ss, "MMMM D, YYYY H:mm a").datetime
+            except Exception as e:
+                article_ts = None
         else:
             article_ts = None
 
@@ -162,6 +190,10 @@ class DatabaseHelper():
         return title, body, article_ts, author
 
     def set_mining_com_data(self, articles):
+        """
+        Set the title, author etc for mining.com articles
+        :param articles: subset of articles to work on
+        """
         print("Extracting Data from HTML for {} articles".format(articles.rowcount))
         for i, a in enumerate(articles):
             if i % 100 == 0:
@@ -185,21 +217,7 @@ class SpacyHelper():
         self.nlp_tokenizer.remove_pipe('ner')
         self.stemmer = SnowballStemmer('english')
 
-        self.commodities_keywords = {
-            'index', 'trading', 'source', 'metal', 'expect', 'mining', 'bulletin', 'import',
-            'yuan', 'miner', 'spot',
-            'project', 'cobalt', 'government', 'increase', 'market', 'producer', 'base',
-            'lithium', 'year', 'iron', 'low',
-            'scrap', 'billion', 'week', 'large', 'high', 'report', 'industry', 'percent',
-            'trade', 'accord', 'new',
-            'grade', 'price', 'demand', 'include', 'lme', 'company', 'country', 'ounce',
-            'china', 'contract', 'battery',
-            'gold', 'mine', 'investment', 'share', 'nickel', 'time', 'production', 'material',
-            'us', 'copper', 'million',
-            'lead', 'ore', 'the', 'chinese', 'cost', 'steel', 'operation', 'supply', 'world',
-            'aluminium', 'global',
-            'month', 'tonne', 'coal', 'add'}
-
+        # Stemmed words with positive sentiment from the Loughran Macdonald Sentiment Dictionary
         self.positive_sentiment = {
             'abl', 'abund', 'acclaim', 'accomplish', 'achiev', 'adequ', 'advanc', 'advantag',
             'allianc', 'assur', 'attain', 'attract', 'beauti', 'benefici', 'benefit', 'best',
@@ -226,6 +244,8 @@ class SpacyHelper():
             'win', 'winner',
             'worthi'}
 
+
+        # Stemmed words with negative sentiment from the Loughran Macdonald Sentiment Dictionary
         self.negative_sentiment = {
             'abandon', 'abdic', 'aberr', 'abet', 'abnorm', 'abolish', 'abrog', 'abrupt',
             'absenc', 'absente', 'abus', 'accid', 'accident', 'accus', 'acquiesc',
@@ -360,6 +380,7 @@ class SpacyHelper():
             'worri', 'wors', 'worsen', 'worst', 'worthless', 'writedown', 'writeoff',
             'wrong', 'wrongdo'}
 
+        # Stemmed words with uncertain sentiment from the Loughran Macdonald Sentiment Dictionary
         self.uncertain_sentiment = {
             'abey', 'almost', 'alter', 'ambigu', 'anomal', 'anomali', 'anticip', 'appar',
             'appear', 'approxim', 'arbitrari', 'arbitrarili', 'assum', 'assumpt', 'believ',
@@ -382,21 +403,13 @@ class SpacyHelper():
             'vaguest', 'vari', 'variabl', 'varianc', 'variant', 'variat', 'volatil'}
 
 
-
-    def create_phrase_matcher(self, word_array, matcher_name):
-        term_matchers = list(map(lambda term: self.nlp(term), word_array))
-        matcher = PhraseMatcher(self.nlp.vocab)
-        matcher.add(matcher_name, None, *term_matchers)
-        return matcher
-
-
-    def match_keywords(self, text):
-        # For counting number of keywords in a document
-        doc = self.nlp_tokenizer(text)
-        lemmas = set([token.lemma_ for token in doc if not token.is_stop and not token.is_punct and token.is_alpha])
-        return len(lemmas.intersection(self.commodities_keywords)), len(doc)
-
     def get_article_sentiment(self, text):
+        """
+        Count number of positive, negative and uncertain words that appear in
+        a give text
+        :param text: text to be processed
+        :return: positive, negative and uncertain word counts
+        """
         text = text or ""
         words = text.split()
         article_len = len(words)
@@ -413,25 +426,18 @@ class SpacyHelper():
 
 
 
-
-    def find_matches(self, matcher, text):
-        if not text:
-            return [], 0
-        doc = self.nlp(text)
-        words = [token.lemma_ for token in doc if not token.is_stop and not token.is_punct and token.is_alpha]
-        doc = self.nlp(" ".join(words))
-        matches = matcher(doc)
-        return len(matches)
-
     def stem_words(self, word_array):
-        # return set of unique stemmed words
+        """
+        Used to generate the Positive, Negative and Uncertain stemmed words
+        :param word_array: Array of words from the Loughran Macdonald Sentiment Dictionary
+        :return: Set of stemmed words
+        """
         res = set()
         for word in word_array:
             stemmed = self.stemmer.stem(word)
             if stemmed:
                 res.add(stemmed)
         return res
-
 
 
 
