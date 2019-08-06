@@ -19,11 +19,14 @@ import utils
 import model
 from datetime import date, timedelta
 import numpy as np
+import warnings
 import rpy2.robjects as robjects
 robjects.r('.source4Efunction()')
 from rpy2.robjects.packages import importr
 rbase = importr('base')
 rzoo = importr('zoo')
+from sklearn.exceptions import UndefinedMetricWarning
+warnings.filterwarnings(action='ignore', category=UndefinedMetricWarning)
 
 s = utils.SpacyHelper()
 db = utils.DatabaseHelper()
@@ -103,6 +106,10 @@ def calculate_author_bias(start_date, end_date):
     :param start_date of articles to process
     :param end_date of articles to process
     :return: dataframe of authors with average sentiment scores
+    Example
+    start_date = date(2014, 7, 28)
+    end_date = date(2018, 2, 23)
+    authors = calculate_author_bias(start_date, end_date)
     """
     print("Calculating Author Bias")
     sql_st = select([
@@ -148,6 +155,8 @@ def convert_to_date(row):
     Extracts date portion from datetime timestamp for each article
     :param row: row to extract date from datetime
     :return: row with date
+    Example
+    articles = articles.apply(convert_to_date, axis=1)
     """
     row['article_date'] = row['article_timestamp'].date()
     return row
@@ -158,6 +167,10 @@ def get_articles(start_date, end_date):
     :param start_date
     :param end_date
     :return: Dataframe of articles within the relevant range
+    Example
+    start_date = date(2014, 7, 28)
+    end_date = date(2018, 2, 23)
+    articles = get_articles(start_date, end_date)
     """
 
     print("Processing Articles")
@@ -200,9 +213,13 @@ def train_model(authors, articles, positions, target_column, delta_days):
     :param target_column: name of column being predicted
     :param delta_days: days in the future to make prediction for
     :return:
+    Example
+    result, best_params = train_model(authors, articles, positions, 'avg_net_norm', 3)
+    print(result['accuracy'])
+
     """
     print("Starting Training for {}, Delta {}".format(target_column, delta_days))
-    best_f1_score = 0
+    best_mts = 0
     best_result = None
     best_params = None
     for max_b in range(5, 10):
@@ -216,16 +233,15 @@ def train_model(authors, articles, positions, target_column, delta_days):
                         min_positive_bias=min_b
                     ).generate_daily_summaries().process_data()
                     s.lr_cv_split(x_cols)
-                    f1_score = s.result['f1_score']
-                    if f1_score > best_f1_score:
-                        best_f1_score = f1_score
+                    mts = s.result['mean_test_score']
+                    accuracy = s.result['accuracy']
+                    if mts > best_mts:
+                        best_mts = mts
                         best_result = s.result
                         best_params = [max_b, min_b, x_cols]
                 except Exception as e:
-                    #print(e)
-                    pass
+                    print('Exception', e)
     return best_result, best_params
-
 
 def m2ar(matrix,lag = False):
     '''
@@ -284,12 +300,15 @@ def get_alphien_data(start_date = None, end_date = None):
     data.reset_index(level=0,inplace=True)
     return data
 
-
-
 def process_alphien_data(alphien_data):
     """
     :param alphien_data: raw data about the net and total positions for the 6 base metals
     :return: processed dataframe containing 'avg_net_norm', the target column of interest
+    Example
+    start_date = date(2014, 7, 28)
+    end_date = date(2018, 2, 23)
+    alphien_data = get_alphien_data(alphien_data)
+    data = process_alphien_data(alphien_data)
     """
     alphien_data = alphien_data.rename(columns = mapper)
     for metal in metals:
@@ -312,23 +331,16 @@ def main():
     positions = process_alphien_data(alphien_data)
 
     results = {}
-    # delta 1 model
-    del1, del1_best_params = train_model(authors, articles, positions, target_column, 1)
-    print("Delta 1 Results - Accuracy: {}, F1 Score: {}".format(del1['accuracy'], del1['f1_score']), )
-    results['del1'] = del1['predictions']
 
-    # delta 3 model
-    del3, del3_best_params = train_model(authors, articles, positions, target_column, 3)
-    print("Delta 3 Results - Accuracy: {}, F1 Score: {}".format(del3['accuracy'], del3['f1_score']), )
-    results['del3'] = del3['predictions']
 
-    # delta 5 model
-    del5, del5_best_params = train_model(authors, articles, positions, target_column, 5)
-    print("Delta 5 Results - Accuracy: {}, F1 Score: {}".format(del5['accuracy'], del5['f1_score']), )
-    results['del5'] = del5['predictions']
+    for delta_days in [1,3,5]:
+        result, best_params = train_model(authors, articles, positions, target_column, delta_days)
+        print("Delta {} Results - Accuracy: {}, F1 Score: {}".format(delta_days, result['accuracy'], result['f1_score']))
+        results['del{}'.format(delta_days)] = result['predictions']
+
 
     date_range = pd.date_range(
-        end_date - timedelta(days=len(del1['predictions']) - 1),
+        end_date - timedelta(days=len(result['predictions']) - 1),
         end_date
     )
     results['date'] = date_range

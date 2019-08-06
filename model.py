@@ -28,11 +28,12 @@ class SentimentModel:
 
     def process_one_day(self, k, data):
         """
-        Creates the average positive, negative and
+        Helper method for creating the average positive, negative and
         uncertain sentiment of all articles for one day
         :param k: date of articles being processed
         :param data: dataframe of articles for the particular date
         :return: dictionary of average sentiment for one day
+
         """
         res = {'article_date': k}
         res['positive'] = data.p_count_norm.mean()
@@ -45,7 +46,13 @@ class SentimentModel:
     def generate_daily_summaries(self):
         """
         Process all articles to produce average sentiment for each day
+        Expect filter_by_authors to be called before this function
         Sets this processed data to self.data
+        Example
+        s = SentimentModel(authors, articles, positions, 'avg_net_norm', 3)
+        s.filter_by_authors()
+        s.generate_daily_summaries()
+        print(s.data) # s.data is now a dataframe of average sentiment for each day
         """
         days = []
         grouped_data = self.filtered_articles.groupby('article_date')
@@ -65,6 +72,10 @@ class SentimentModel:
         :param max_positive_bias: filter out authors who have a bias above this value
         :param min_positive_bias: filter out authors who have a bias below this value
         Set the result to self.filtered_articles
+        Example
+        s = SentimentModel(authors, articles, positions, 'avg_net_norm', 3)
+        s.filter_by_authors(max_positive_bias=3, min_positive_bias=-4)
+        print(s.filtered_articles) # smaller subset of articles
         """
         self.filtered_authors = self.authors.copy(deep=True)
         if max_positive_bias:
@@ -81,9 +92,17 @@ class SentimentModel:
 
     def process_data(self, classes=2):
         """
+        Helper method
         Calculates the difference in position for 1,3 and 5 days.
         Converts this delta to classes: +1 for positive change and -1 for negative change
         :param classes: number of classes to categorize the delta changes into
+
+        Example
+        s = SentimentModel(authors, articles, positions, 'avg_net_norm', 3)
+        s.filter_by_authors(max_positive_bias=3, min_positive_bias=-4)
+        s.generate_daily_summaries()
+        s.process_data()
+        print(self.data)
         """
         self.calculate_deltas(self.target_column)
         if classes == 2:
@@ -95,6 +114,7 @@ class SentimentModel:
 
     def calculate_deltas(self, col_name):
         """
+        Helper method
         Calculates changes between today and previous
          1,3 and 5 days for target column
         :param col_name: column to calculate deltas for
@@ -140,6 +160,13 @@ class SentimentModel:
         Trains a model based on self.data
         :param x_cols: Name of the columns to use as features
         :return: result containing trained model and predictions
+        Example
+        s = SentimentModel(authors, articles, positions, 'avg_net_norm', 3)
+        s.filter_by_authors(max_positive_bias=3, min_positive_bias=-4)
+        s.generate_daily_summaries()
+        s.process_data(['negative'])
+        print(s.result)
+
         """
         y_col = "{}_del{}_dir".format(self.target_column, self.delta_days)
         df = self.data
@@ -164,9 +191,8 @@ class SentimentModel:
 
         pca = PCA()
         pca_lr_pipeline = Pipeline([('scale', StandardScaler()), ('pca', pca), ('lr', lr)])
-        clf = GridSearchCV(pca_lr_pipeline, pca_lr_parameters, cv=5, iid=False, n_jobs=-1, return_train_score=True,
-                           scoring='f1')
-        clf.fit(X_train, y_train);
+        clf = GridSearchCV(pca_lr_pipeline, pca_lr_parameters, cv=5, iid=False, n_jobs=-1, return_train_score=True)
+        clf.fit(X_train, y_train)
 
         result = {
             'name': '{}-{}'.format(y_col, x_cols),
@@ -177,6 +203,7 @@ class SentimentModel:
             'y_test': y_test
         }
         self.result = result
-        self.result['accuracy'] = max(self.result['clf'].cv_results_['mean_test_score'])
+        self.result['mean_test_score'] = max(self.result['clf'].cv_results_['mean_test_score'])
+        self.result['accuracy'] = clf.score(X_test, y_test)
         self.result['f1_score'] = f1_score(self.result['y_test'], self.result['clf'].predict(self.result['X_test']))
         return self
