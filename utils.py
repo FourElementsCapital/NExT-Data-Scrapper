@@ -32,13 +32,18 @@ class DatabaseHelper():
         """
         config = configparser.ConfigParser()
         config.read('/mnt/public/Libs/.pyConfig.ini')
-        engine = create_engine('mysql+mysqldb://'+config['mariadbscraper']['user']+':'+config['mariadbscraper']['pass']+'@'+config['mariadbscraper']['host']+':'+config['mariadbscraper']['port']+'/scraperDb')
+        engine = create_engine('mysql+mysqldb://'+config['mariadbscraper']['user']+':'+config['mariadbscraper']['pass']+'@'+config['mariadbscraper']['host']+':'+config['mariadbscraper']['port']+'/scraperDb?charset=utf8mb4')
         return engine
 
     def get_table(self, name):
         """
         Return SQLAlchemy representation of a database table
         :param name: name of table
+        Example
+        db = DatabaseHelper()
+        news_table = db.get_table('news')
+        # sql statement
+        st = select([news_table]).order_by....
         """
         meta = MetaData()
         table = Table(name, meta, autoload=True, autoload_with=self.engine)
@@ -49,6 +54,11 @@ class DatabaseHelper():
         Helper method for getting articles from a particular source
         :param source: name of source
         :return: SQLAlchemy cursor of articles
+        Example
+        db = DatabaseHelper()
+        articles_cursor = db.get_articles('Mining.com - General')
+        for article in articles_cursor:
+            # do something here
         """
         st = select([self.news]).where(self.news.c.source == source)
         return self.connection.execute(st)
@@ -57,6 +67,11 @@ class DatabaseHelper():
         """
         Helper method for getting subset of articles that position data is availabe for
         :return: SQLAlchemy cursor of articles
+        Example
+        db = DatabaseHelper()
+        articles_cursor = db.articles_with_position_data()
+        for article in articles_cursor:
+            # do something here
         """
         return select([self.news]).where(and_(self.news.c.article_timestamp >= '2014-07-28', self.news.c.article_timestamp <= '2018-02-23'))
 
@@ -64,6 +79,11 @@ class DatabaseHelper():
         """
         Helper method for getting subset of articles without position data
         :return: SQLAlchemy cursor of articles
+        Example
+        db = DatabaseHelper()
+        articles_cursor = db.articles_without_position_data()
+        for article in articles_cursor:
+            # do something here
         """
         return select([self.news]).where(self.news.c.article_timestamp > '2018-02-23')
 
@@ -71,6 +91,11 @@ class DatabaseHelper():
         """
         Helper method for getting subset of articles from fastmarkets
         :return: SQLAlchemy cursor of articles
+        Example
+        db = DatabaseHelper()
+        articles_cursor = db.fastmarkets_articles()
+        for article in articles_cursor:
+            # do something here
         """
         st = select([self.news]).where(self.news.c.source == 'fastmarkets')
         return self.connection.execute(st)
@@ -79,6 +104,9 @@ class DatabaseHelper():
         """
         Set title, body and other metadata on articles scraped from fastmarkets
         :return:
+        Example
+        db = DatabaseHelper()
+        db.set_fastmarkets_data()
         """
         articles = self.fastmarkets_articles()
         for i, a in enumerate(articles):
@@ -94,6 +122,12 @@ class DatabaseHelper():
         scraped from fastmarkets
         :param html:
         :return: title and body
+        Example
+        db = DatabaseHelper()
+        articles = db.fastmarkets_articles()
+        for article in articles:
+            title, body = db.extract_fast_markets(article.full_html)
+            # do something with title and body
         """
         soup = BeautifulSoup(html, 'html.parser')
         title = soup.find("h1", {'class': 'heading-title'})
@@ -109,6 +143,10 @@ class DatabaseHelper():
         Fetch one article by id
         :param id:
         :return: article
+        Example
+        db = DatabaseHelper()
+        article = db.get_one_article(1)
+        print(article.title)
         """
         st = select([self.news]).where(self.news.c.id == id)
         res = self.connection.execute(st)
@@ -119,6 +157,13 @@ class DatabaseHelper():
         Extract title, body and other metadata from html scraped from mining.com
         :param html:
         :return: title, body, article_timestampe and author
+        Example
+        db = DatabaseHelper()
+        articles = db.get_articles('Mining.com - General')
+        for article in articles:
+            title, body, timestamp, author = db.extract_mining_com(article.full_html)
+            # do something with title, body, timestamp, author
+
         """
         soup = BeautifulSoup(html, 'html.parser')
 
@@ -189,6 +234,10 @@ class DatabaseHelper():
         """
         Set the title, author etc for mining.com articles
         :param articles: subset of articles to work on
+        Example
+        db = DatabaseHelper()
+        articles = db.get_articles('Mining.com - General)
+        db.set_mining_com_data(articles)
         """
         print("Extracting Data from HTML for {} articles".format(articles.rowcount))
         for i, a in enumerate(articles):
@@ -405,6 +454,11 @@ class SpacyHelper():
         a give text
         :param text: text to be processed
         :return: positive, negative and uncertain word counts
+        Example
+        db = DatabaseHelper()
+        s = SpacyHelper()
+        article = db.get_article(1)
+        positive, negative, uncertain, article_len = s.get_article_sentiment(article.full_text)
         """
         text = text or ""
         words = text.split()
@@ -427,6 +481,12 @@ class SpacyHelper():
         Used to generate the Positive, Negative and Uncertain stemmed words
         :param word_array: Array of words from the Loughran Macdonald Sentiment Dictionary
         :return: Set of stemmed words
+        Example
+        s = SpacyHelper()
+        words = ['one', 'two', 'three']
+        stemmed_words = s.stem_words(word)
+        print(stemmed_words)
+
         """
         res = set()
         for word in word_array:

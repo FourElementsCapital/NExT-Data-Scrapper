@@ -222,7 +222,7 @@ def train_model(authors, articles, positions, target_column, delta_days):
                         best_result = s.result
                         best_params = [max_b, min_b, x_cols]
                 except Exception as e:
-                    print(e)
+                    #print(e)
                     pass
     return best_result, best_params
 
