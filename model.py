@@ -11,7 +11,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, accuracy_score
 import warnings
 from sklearn.exceptions import UndefinedMetricWarning
 warnings.filterwarnings(action='ignore', category=UndefinedMetricWarning)
@@ -191,7 +191,9 @@ class SentimentModel:
 
         pca = PCA()
         pca_lr_pipeline = Pipeline([('scale', StandardScaler()), ('pca', pca), ('lr', lr)])
-        clf = GridSearchCV(pca_lr_pipeline, pca_lr_parameters, cv=5, iid=False, n_jobs=-1, return_train_score=True)
+        clf = GridSearchCV(
+            pca_lr_pipeline, pca_lr_parameters, cv=5,
+            iid=False, n_jobs=-1, return_train_score=True, scoring='f1')
         clf.fit(X_train, y_train)
 
         result = {
@@ -204,6 +206,6 @@ class SentimentModel:
         }
         self.result = result
         self.result['mean_test_score'] = max(self.result['clf'].cv_results_['mean_test_score'])
-        self.result['accuracy'] = clf.score(X_test, y_test)
+        self.result['accuracy'] = accuracy_score(y_test, clf.predict(X_test))
         self.result['f1_score'] = f1_score(self.result['y_test'], self.result['clf'].predict(self.result['X_test']))
         return self

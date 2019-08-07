@@ -337,8 +337,9 @@ def main():
         result, best_params = train_model(authors, articles, positions, target_column, delta_days)
         print("Delta {} Results - Accuracy: {}, F1 Score: {}".format(delta_days, result['accuracy'], result['f1_score']))
         results['del{}'.format(delta_days)] = result['predictions']
-
-
+        #Delta 1 Results - Accuracy: 0.525, F1 Score: 0.5
+        #Delta 3 Results - Accuracy: 0.5166666666666667, F1 Score: 0.31764705882352945
+        #Delta 5 Results - Accuracy: 0.5349794238683128, F1 Score: 0.3067484662576687
     date_range = pd.date_range(
         end_date - timedelta(days=len(result['predictions']) - 1),
         end_date
