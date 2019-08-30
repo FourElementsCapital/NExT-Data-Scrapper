@@ -37,7 +37,7 @@ async function scrapePage(chrome, url) {
 async function run() {
 
   const browser = await puppeteer.launch({
-    headless: false
+    headless: true
   });
   const chrome = await browser.newPage();
 

@@ -1,12 +1,12 @@
 const puppeteer = require('puppeteer');
 const squel = require("squel");
 const moment = require('moment');
-const { Pool, Client } = require('pg');
+//const { Pool, Client } = require('pg');
+const mariadb = require('mariadb');
 const chrono = require('chrono-node');
 const site_configs = require('./site_configs');
-const {client} = require('./db');
+const client = require('./db');
 extractor = require('unfluff');
-
 
 async function getLinks(link, chrome) {
   chrome.setExtraHTTPHeaders({
@@ -50,26 +50,29 @@ async function get_article_data(link, chrome) {
     console.log('error', error); 
     return false
   }
-
 }
 
 
 async function save_to_db(source, html, url) {
   let query_str = squel.insert({replaceSingleQuotes: true})
-      .into('news')
+      .into('scraperDb.news')
       .setFields({
         source: source,
         full_html: html,
         original_url: url
       }).toString();
-  query_str += ' ON CONFLICT (original_url) DO NOTHING';
+  query_str += ' ON DUPLICATE KEY UPDATE `source`=VALUES(`source`),`full_html`=VALUES(`full_html`),`original_url`=VALUES(`original_url`)';
+  //console.log(query_str)
   return new Promise((resolve, reject) => {
-    global.client.query(query_str, (err, res) => {
-      if (err) reject(err);
-      else resolve(res)
-    });
+    client.query(query_str)
+          .then(res => {
+                console.log(res)
+                resolve(res);
+          })
+          .catch(err => {
+                 reject(err)
+          })
   });
-
 }
 
 
@@ -79,17 +82,9 @@ async function run() {
   global.start_page = 1;
   if (!site) { throw "Unrecognized Site" }
   const browser = await puppeteer.launch({
-    headless: false
+    headless: process.env.NODE_ENV == 'production'
   });
   const chrome = await browser.newPage();
-
-  //let link = 'https://www.fastmarkets.com/article/3858263/canada-232-retaliation-hits-us-steel-exports';
-  //await chrome.goto(link, {waituntil: 'networkidle2'});
-  //
-  //let html_str = await chrome.evaluate(() => {
-  //  return document.documentElement.innerHTML
-  //});
-
 
   console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
   console.log('Scraping', site.name);
@@ -98,7 +93,6 @@ async function run() {
 
     console.log('Scraping Page', page_no)
     let links = await getLinks(site.page_url(page_no), chrome);
-
 
     for (let link of links) {
       try {
@@ -118,5 +112,3 @@ async function run() {
 
 
 run();
-
-
