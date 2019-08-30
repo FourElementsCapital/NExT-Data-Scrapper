@@ -320,7 +320,7 @@ def process_alphien_data(alphien_data):
 
 def main():
     start_date = date(2018, 2, 23)
-    end_date = date.today
+    end_date = date.today()
     target_column = 'avg_net_norm'
 
     extract_full_text_and_meta()
