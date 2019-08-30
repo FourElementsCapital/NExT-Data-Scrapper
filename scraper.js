@@ -91,7 +91,7 @@ async function run() {
   console.log("++++++++++++++++++++++++++++++++++++++++++++++++");
   for (let page_no = 1; page_no <= site.last_page; page_no++) {
 
-    console.log('Scraping Page', page_no)
+    console.log('Scraping Page', page_no,'/',site.last_page)
     let links = await getLinks(site.page_url(page_no), chrome);
 
     for (let link of links) {
