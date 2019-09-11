@@ -1,14 +1,12 @@
 from bs4 import BeautifulSoup
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, select, Float, Date, Time, join, exists
 from sqlalchemy.dialects.postgresql import JSON, JSONB
+from sqlalchemy.dialects import mysql
+from sqlalchemy.dialects.mysql import insert
 from sqlalchemy import desc, func
 from sqlalchemy.sql import and_, or_
 from sqlalchemy import create_engine
 import os
-from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, select, Float, Date, Time, join, exists
-from sqlalchemy.dialects.postgresql import JSON, JSONB
-from sqlalchemy import desc, func
-from sqlalchemy.sql import and_
 import spacy
 from spacy.matcher import PhraseMatcher
 from timeit import default_timer as timer
@@ -333,10 +331,10 @@ def main():
 
     results = {}
 
-
     for delta_days in [1,3,5]:
         result, best_params = train_model(authors, articles, positions, target_column, delta_days)
-        print("Delta {} Results - Accuracy: {}, F1 Score: {}".format(delta_days, result['accuracy'], result['f1_score']))
+        text = ("Delta {} Results - Accuracy: {}, F1 Score: {}".format(delta_days, result['accuracy'], result['f1_score']))
+        robjects.r('''send2Log("'''+text+'''")''')
         results['del{}'.format(delta_days)] = result['predictions']
         #Delta 1 Results - Accuracy: 0.45454545454545453, F1 Score: 0.4999999999999999
         #Delta 3 Results - Accuracy: 0.45454545454545453, F1 Score: 0.625
@@ -345,9 +343,48 @@ def main():
         end_date - timedelta(days=len(result['predictions']) - 1),
         end_date
     )
-    results['date'] = date_range
-
+    results['cdate'] = date_range
     predictions = pd.DataFrame(data=results)
+    # change this to send whole history
+    predD1 = predictions.iloc[-2:,[3,0]]
+    predD1['name'] = 'avgNetNorm1D'
+    predD1.columns = ['cdate','val','name']
+    
+    predD3 = predictions.iloc[-2:,[3,1]]
+    predD3['name'] = 'avgNetNorm3D'
+    predD3.columns = ['cdate','val','name']
+    
+    predD5 = predictions.iloc[-2:,[3,2]]
+    predD5['name'] = 'avgNetNorm5D'
+    predD5.columns = ['cdate','val','name']
+    
+    tosend = predD1.append(predD3,ignore_index=True)
+    tosend = tosend.append(predD5,ignore_index=True)
+    
+    live = db.get_table('live')
+    for i in range(len(tosend.index)):
+         insertQuery = insert(live).values(cdate=tosend.cdate.values[i],
+                             name=tosend.name.values[i],val=tosend.val.values[i])
+         duplicateQuery = insertQuery.on_duplicate_key_update(
+                     cdate=insertQuery.inserted.cdate,
+                     name=insertQuery.inserted.name,
+                     val=insertQuery.inserted.val,
+                 status='U')
+         db.connection.execute(duplicateQuery)
+         
+    tosendTraded = tosend[tosend['cdate'] == date.today()]
+    traded = db.get_table('traded')   
+    for i in range(len(tosendTraded.index)):
+         insertQuery = insert(traded).values(cdate=tosendTraded.cdate.values[i],
+                             name=tosendTraded.name.values[i],val=tosendTraded.val.values[i])
+         duplicateQuery = insertQuery.on_duplicate_key_update(
+                     cdate=insertQuery.inserted.cdate,
+                     name=insertQuery.inserted.name,
+                     val=insertQuery.inserted.val,
+                 status='U')
+         db.connection.execute(duplicateQuery)
+    #print(duplicateQuery.compile(dialect=mysql.dialect()))
+
     return predictions
 
 

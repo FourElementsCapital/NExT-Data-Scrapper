@@ -5,8 +5,8 @@ from sqlalchemy import desc, func
 from sqlalchemy.sql import and_, or_
 from sqlalchemy import create_engine
 import os
-from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, select, Float, Date, Time, join, exists
-from sqlalchemy.dialects.postgresql import JSON, JSONB
+from sqlalchemy.dialects import mysql
+from sqlalchemy.dialects.mysql import insert
 from sqlalchemy import desc, func
 from sqlalchemy.sql import and_
 import spacy
@@ -330,24 +330,50 @@ def main():
     alphien_data = get_alphien_data(start_date, end_date)
     positions = process_alphien_data(alphien_data)
 
-    results = {}
-
-
+    out = list()
     for delta_days in [1,3,5]:
+        results = {}
         result, best_params = train_model(authors, articles, positions, target_column, delta_days)
         print("Delta {} Results - Accuracy: {}, F1 Score: {}".format(delta_days, result['accuracy'], result['f1_score']))
         results['del{}'.format(delta_days)] = result['predictions']
         #Delta 1 Results - Accuracy: 0.525, F1 Score: 0.5
         #Delta 3 Results - Accuracy: 0.5166666666666667, F1 Score: 0.31764705882352945
         #Delta 5 Results - Accuracy: 0.5349794238683128, F1 Score: 0.3067484662576687
-    date_range = pd.date_range(
-        end_date - timedelta(days=len(result['predictions']) - 1),
-        end_date
-    )
-    results['date'] = date_range
-
-    predictions = pd.DataFrame(data=results)
-    return predictions
+        # send 1 day data first
+        date_range = pd.date_range(
+            end_date - timedelta(days=len(result['predictions']) - 1),
+            end_date
+        )
+        results['cdate'] = date_range
+        predictions = pd.DataFrame(data=results)
+        out.append(predictions)
+        
+    predD1 = out[0]
+    predD1['name'] = 'avgNetNorm1D'
+    predD1.columns = ['val','cdate','name']
+    
+    predD3 = out[1]
+    predD3['name'] = 'avgNetNorm3D'
+    predD3.columns = ['val','cdate','name']
+    
+    predD5 = out[2]
+    predD5['name'] = 'avgNetNorm5D'
+    predD5.columns = ['val','cdate','name']
+    
+    tosend = predD1.append(predD3,ignore_index=True)
+    tosend = tosend.append(predD5,ignore_index=True)
+    
+#    live = db.get_table('live')
+#    for i in range(len(tosend.index)):
+#         insertQuery = insert(live).values(cdate=tosend.cdate.values[i],
+#                             name=tosend.name.values[i],val=tosend.val.values[i])
+#         duplicateQuery = insertQuery.on_duplicate_key_update(
+#                     cdate=insertQuery.inserted.cdate,
+#                     name=insertQuery.inserted.name,
+#                     val=insertQuery.inserted.val,
+#                 status='U')
+#         db.connection.execute(duplicateQuery)
+    return tosend
 
 
 
