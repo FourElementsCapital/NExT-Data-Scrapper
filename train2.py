@@ -19,7 +19,7 @@ from datetime import date, timedelta
 import numpy as np
 import warnings
 import rpy2.robjects as robjects
-robjects.r('.source4Efunction()')
+robjects.r('.sourceQlib()')
 from rpy2.robjects.packages import importr
 rbase = importr('base')
 rzoo = importr('zoo')

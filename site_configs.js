@@ -6,8 +6,8 @@ let mining_general = {
   page_url: function (page_no) {
     return `https://www.mining.com/markets/${page_no}/`;
   },
-  link_selector: 'article.row.pb-3 h1 a, article.row.pb-3 h3 a',
-  last_page: 2200,
+  link_selector: 'div.row h1 a, div.row h3 a, article.row.pb-3 h1 a, article.row.pb-3 h3 a',
+  last_page: 50,
 
 };
 
@@ -16,8 +16,8 @@ let mining_copper = {
   page_url: function (page_no) {
     return `https://www.mining.com/commodity/copper/?page=${page_no}`;
   },
-  link_selector: 'article.row.pb-3 h1 a, article.row.pb-3 h3 a',
-  last_page: 314,
+  link_selector: 'div.row h1 a, div.row h3 a, article.row.pb-3 h1 a, article.row.pb-3 h3 a',
+  last_page: 50,
 };
 
 let mining_nickel = {
@@ -25,16 +25,16 @@ let mining_nickel = {
   page_url: function (page_no) {
     return `https://www.mining.com/commodity/nickel/?page=${page_no}`;
   },
-  link_selector: 'article.row.pb-3 h1 a, article.row.pb-3 h3 a',
-  last_page: 60,
+  link_selector: 'div.row h1 a, div.row h3 a, article.row.pb-3 h1 a, article.row.pb-3 h3 a',
+  last_page: 50,
 };
 let mining_zinc = {
   name: "Mining.com - Zinc",
   page_url: function (page_no) {
     return `https://www.mining.com/commodity/zinc/?page=${page_no}`;
   },
-  link_selector: 'article.row.pb-3 h1 a, article.row.pb-3 h3 a',
-  last_page: 65,
+  link_selector: 'div.row h1 a, div.row h3 a, article.row.pb-3 h1 a, article.row.pb-3 h3 a',
+  last_page: 50,
 };
 
 let fastmarkets = {
