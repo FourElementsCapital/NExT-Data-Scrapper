@@ -7,7 +7,7 @@ let mining_general = {
     return `https://www.mining.com/markets/${page_no}/`;
   },
   link_selector: 'div.row h1 a, div.row h3 a, article.row.pb-3 h1 a, article.row.pb-3 h3 a',
-  last_page: 50,
+  last_page: 5,
 
 };
 
@@ -17,7 +17,7 @@ let mining_copper = {
     return `https://www.mining.com/commodity/copper/?page=${page_no}`;
   },
   link_selector: 'div.row h1 a, div.row h3 a, article.row.pb-3 h1 a, article.row.pb-3 h3 a',
-  last_page: 50,
+  last_page: 5,
 };
 
 let mining_nickel = {
@@ -26,7 +26,7 @@ let mining_nickel = {
     return `https://www.mining.com/commodity/nickel/?page=${page_no}`;
   },
   link_selector: 'div.row h1 a, div.row h3 a, article.row.pb-3 h1 a, article.row.pb-3 h3 a',
-  last_page: 50,
+  last_page: 5,
 };
 let mining_zinc = {
   name: "Mining.com - Zinc",
@@ -34,7 +34,7 @@ let mining_zinc = {
     return `https://www.mining.com/commodity/zinc/?page=${page_no}`;
   },
   link_selector: 'div.row h1 a, div.row h3 a, article.row.pb-3 h1 a, article.row.pb-3 h3 a',
-  last_page: 50,
+  last_page: 5,
 };
 
 let fastmarkets = {

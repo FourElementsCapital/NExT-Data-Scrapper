@@ -38,7 +38,7 @@ mapper = {
     'AHCTILXB': 'aluminium_total',
     'CTCTSOVM': 'copper_long',
     'CTCTFCWY': 'copper_net',
-    'CTCTPACA': 'copper_short',
+    'CTCTPACT': 'copper_short',
     'CTCTILXB': 'copper_total',
     'NICTSOVM': 'nickel_long',
     'NICTFCWY': 'nickel_net',
